@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "models"
+		}
+	],
+	"settings": {
+		"files.encoding": "utf8"
+	}
+}

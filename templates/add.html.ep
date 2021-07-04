@@ -1,0 +1,117 @@
+% layout 'common', title => 'Index';
+
+
+<form action="/update" name="add">
+
+	<% if (stash('success_message')) { %>
+	<div class="notice-box">
+		<div class="alert alert-success" role="alert">
+			<%= stash('success_message') %>
+		</div>
+	</div>
+	<% } %>
+	
+	<% if (stash('error_message')) { %>
+		<div class="notice-box">
+			<div class="alert alert-danger" role="alert">
+				<%= stash('error_message') %>
+			</div>
+		</div>
+	<% } %>
+
+	
+	<section class="add-section">
+		<div class="card-image-filter">
+			<%= image '/images/total-value-header.jpg', class =>'card-img-top total-value-header' %>
+			<span>費目の追加</span>
+		</div>
+	</section>
+	
+	<section class="add-section">
+		<h5>購入日</h5>
+		<% 
+			my $current_date .= stash('current_date')->year . '-' . 
+			sprintf("%02d", stash('current_date')->month) . '-' . 
+			sprintf("%02d", stash('current_date')->day);
+		%>
+		<div><input type="date" class="purchase-date" name="purchase_date" value="<%= $current_date %>"></div>
+	</section>
+	
+	<section class="add-section">
+		<h5>カテゴリ</h5>
+			
+			<input type="radio" class="btn-check" name="category" value="食費" id="option1" autocomplete="off" checked>
+			<label class="btn btn-outline-primary mt-3" for="option1">食費</label>
+
+			<input type="radio" class="btn-check" name="category" value="日用品" id="option2" autocomplete="off">
+			<label class="btn btn-outline-success mt-3" for="option2">日用品</label>
+			
+			<input type="radio" class="btn-check" name="category" value="電気代" id="option3" autocomplete="off"> 
+			<label class="btn btn-outline-warning mt-3" for="option3">電気代</label>
+			
+			<input type="radio" class="btn-check" name="category" value="水道代" id="option4" autocomplete="off">
+			<label class="btn btn-outline-info mt-3" for="option4">水道代</label>
+			
+			<input type="radio" class="btn-check" name="category" value="ガス代" id="option5" autocomplete="off">
+			<label class="btn btn-outline-danger mt-3" for="option5">ガス代</label>
+			
+			<input type="radio" class="btn-check" name="category" value="その他" id="option6" autocomplete="off">
+			<label class="btn btn-outline-secondary mt-3" for="option6">その他</label>
+	</section>
+	
+	<section class="add-section">
+		<h5>品目等</h5>
+		<div><input type="text" class="purchase-item" name="item" placeholder="例 : お米、卵、醤油"></div>
+	</section>
+	
+	<section class="add-section">
+		<h5>金額</h5>
+		<div><input type="number" class="price" name="price" placeholder="数字で入力してください"></div>
+	</section>
+	
+	<section class="add-section">
+		<div class="d-grid gap-2">
+			<button class="btn-lg btn-primary" type="submit">登　録</button>
+		</div>
+	</section>
+</form>
+
+<% my $receipt_array_ref = stash('receipt_array'); %>
+<% my $receipt_array_length = @{$receipt_array_ref}; %>
+<% if ($receipt_array_length) { %>
+<form action="/delete" name="delete">
+<div class="item-table">
+	<table class="table">
+		<thead>
+			<th scope="col">削除</th>
+			<th scope="col">購入日</th>
+			<th scope="col">カテゴリ</th>
+			<th scope="col">金額</th>
+			<th scope="col">品目等</th>
+		</thead>
+		<tbody>
+			<% foreach my $receipt_hash(@{$receipt_array_ref}) { %>
+			<tr>
+				<td>
+					<button type="submit" class="btn btn-outline-primary btn-sm" name="id" value="<%= $receipt_hash->{'id'}; %>">削除</button>
+				</td>
+				<td>
+					<%= $receipt_hash->{'purchase_date'}; %>
+				</td>
+				<td>
+					<%= $receipt_hash->{'category'}; %>
+				</td>
+				<td>
+					&yen<%= $receipt_hash->{'price'}; %>
+				</td>
+				<td>
+					<%= $receipt_hash->{'item'}; %>
+				</td>
+			</tr>
+			<% } %>
+		</tbody>
+	</table>
+</div>
+</form>
+<% } %>
+

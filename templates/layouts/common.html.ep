@@ -1,0 +1,43 @@
+<!DOCTYPE html class="h-100">
+<html lang="jp">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<%= stylesheet '/css/bootstrap.min.css' %>
+	<%= stylesheet '/css/main.css' %>
+	<script src="https://kit.fontawesome.com/a3467d4ec0.js" crossorigin="anonymous"></script>
+	<title>Copan</title>
+</head>
+<body id="default-settings" class="d-flex flex-column h-100">
+	<div class="navbar navbar-expand-lg bg-primary" role="navigation">
+		<div class="navbar-brand text-light">
+			Copan
+		</div>
+		<% 
+			if ($current ne '/') {
+		%>
+		<form class="form-inline align-middle" action="/">
+			<button class="btn btn-outline-light" type="submit"><i class="fas fa-undo"></i>TOPに戻る</button>
+		</form>
+		% } else {
+		<form class="form-inline align-middle" action="/add">
+			<button class="btn btn-outline-light" type="submit"><i class="fas fa-plus"></i>費目の追加</button>
+		</form>
+		% }
+
+	</div>
+	
+	<main class="main flex-shrink-0"  role="main">
+	<%= content %>
+	</main>
+	
+	<footer class="footer mt-auto bg-primary py-3">
+		<div class="container text-light text-center">
+			&copy;2021Copan
+		</div>
+	</footer>
+</body>
+<%= javascript  '/js/jquery-3.6.0.min.js' %>
+<%= javascript  '/js/bootstrap.bundle.min.js' %>
+</html>
