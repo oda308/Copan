@@ -166,8 +166,6 @@
 .item-table th, 
 .item-table td {
 	text-align: center;
-}
-
-.item-table .item {
-	width: 40%;
+	padding-right: 2px;
+	padding-left: 2px;
 }
