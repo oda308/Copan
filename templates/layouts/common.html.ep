@@ -17,12 +17,12 @@
 		<% 
 			if ($current ne '/') {
 		%>
-		<form class="form-inline align-middle" action="/">
-			<button class="btn btn-outline-light" type="submit"><i class="fas fa-undo"></i>TOPに戻る</button>
+		<form class="form-inline align-middle " action="/">
+			<button class="btn btn-outline-light" type="submit"><i id="undo-icon" class="fas fa-undo"></i></button>
 		</form>
 		% } else {
 		<form class="form-inline align-middle" action="/add">
-			<button class="btn btn-outline-light" type="submit"><i class="fas fa-plus"></i>費目の追加</button>
+			<button class="btn btn-outline-light" type="submit"><i id="add-icon" class="fas fa-plus"></i></button>
 		</form>
 		% }
 
