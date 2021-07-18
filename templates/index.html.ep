@@ -83,10 +83,10 @@
 <div class="item-table">
 	<table class="table">
 		<thead>
-			<th scope="col">購入日</th>
-			<th scope="col">カテゴリ</th>
-			<th scope="col">金額</th>
-			<th scope="col">品目等</th>
+			<th class="purchase-day" scope="col">購入日</th>
+			<th class="category" scope="col">カテゴリ</th>
+			<th class="price" scope="col">金額</th>
+			<th class="item" scope="col">品目等</th>
 		</thead>
 		<tbody>
 			<% my $receipt_array_ref = stash('receipt_array'); %>

@@ -127,9 +127,7 @@
 	padding-left: 10px;
 }
 
-.purchase-input, 
-.purchase-item,
-.price {
+.purchase-input {
 	width: 100%;
 	height: 40px;
 }
@@ -165,3 +163,11 @@
 	width: 30%;
 }
 
+.item-table th, 
+.item-table td {
+	text-align: center;
+}
+
+.item-table .item {
+	width: 40%;
+}

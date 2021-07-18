@@ -117,28 +117,28 @@
 <div class="item-table">
 	<table class="table">
 		<thead>
-			<th scope="col">削除</th>
-			<th scope="col">購入日</th>
-			<th scope="col">カテゴリ</th>
-			<th scope="col">金額</th>
-			<th scope="col">品目等</th>
+			<th class="delete-button" scope="col">削除</th>
+			<th class="purchase-day" scope="col">購入日</th>
+			<th class="category" scope="col">カテゴリ</th>
+			<th class="price" scope="col">金額</th>
+			<th class="item" scope="col">品目等</th>
 		</thead>
 		<tbody>
 			<% foreach my $receipt_hash(@{$receipt_array_ref}) { %>
 			<tr>
-				<td>
+				<td class="align-middle">
 					<button type="submit" class="btn btn-outline-primary btn-sm" name="id" value="<%= $receipt_hash->{'id'}; %>">削除</button>
 				</td>
-				<td>
+				<td class="align-middle">
 					<%= $receipt_hash->{'purchase_date'}; %>
 				</td>
-				<td>
+				<td class="align-middle">
 					<%= $receipt_hash->{'category'}; %>
 				</td>
-				<td>
+				<td class="align-middle">
 					&yen<%= $receipt_hash->{'price'}; %>
 				</td>
-				<td>
+				<td class="align-middle">
 					<%= $receipt_hash->{'item'}; %>
 				</td>
 			</tr>
