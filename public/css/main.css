@@ -2,27 +2,29 @@
 	color: #585858;
 }
 
-main {
-	margin: 10px;
-	margin: 20px;
+.copan-theme-color {
+	background: #0a58ca
 }
 
-.card-image-filter {
-	background: black;
-	position: relative;
+.navbar {
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
-.card-image-filter span {
-	position: absolute;
-	z-index: 2;
-	top: 50%;
-	left: 1.25rem;
-	transform: translateY(-50%);
-	-webkit-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-	color: white;
-	font-weight: bold;
-	font-size: 1.2em;
+.notice-box {
+	padding: 10px;
+}
+
+.date-box {
+	display: flex;
+	justify-content: space-around;
+	padding: 20px 0px;
+	align-items: center;
+	font-size: 1.2rem;
+}
+
+.date-box a {
+	padding: 20px;
 }
 
 .total-value-header {
@@ -32,27 +34,57 @@ main {
 }
 
 .total-value-box {
+	padding: 15px 10px;
+}
+
+.total-value-title {
 	display: flex;
+}
+
+.category-expenses {
+	padding-left: 0;
 }
 
 .expense-item-box {
 	display: flex;
+	border-bottom: solid 1px #dee2e6;
+	padding: 15px 10px;
+}
+
+.expense-item-box:first-child {
+	padding: 20px 10px;
+}
+
+.expense-item:first-child {
+	font-weight: bold;
 }
 
 .expense-item {
-	max-width: 100px;
-	width: 100%;
+	width: 60%;
+	flex-shrink: 0;
+	box-sizing: border-box;
 }
 
 .expense-item-icon {
-	width: 1rem;
+	width: 10%;
 	text-align: center;
-	margin-right: 1rem;
+	margin-right: 10px;
+	flex-shrink: 0;
+	box-sizing: border-box;
+}
+
+.expense-item-value {
+	width: 30%;
+	text-align: right;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	padding-right: 15px;
 }
 
 /*** item-table ***/
 .item-table {
-	margin-top: 50px;
+	margin-top: 30px;
+	margin-bottom: 30px;
 
 }
 
@@ -84,8 +116,15 @@ main {
 
 
 /*** 費目追加ページ ***/
+
+.add-section:first-child {
+	margin-top: 30px;
+}
+
 .add-section {
 	margin-bottom: 30px;
+	padding-right: 10px;
+	padding-left: 10px;
 }
 
 .purchase-date, 

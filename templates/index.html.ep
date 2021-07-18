@@ -17,67 +17,60 @@
 <% } %>
 
 <div class="date-box">
-	<h4>
-		<a href="/?target_year=<%= stash('previous_year') %>&target_month=<%= stash('previous_month') %>">&lt;&lt;</a>
-		<%= stash('target_year') %> / <%= stash('target_month') %> 
-		<a href="/?target_year=<%= stash('next_year') %>&target_month=<%= stash('next_month') %>">&gt;&gt;</a>
-	</h4>
+		<div class="prev-month">
+			<a href="/?target_year=<%= stash('previous_year') %>&target_month=<%= stash('previous_month') %>"><i class="fas fa-caret-left"></i></a>
+		</div>
+		<div class="current-month">
+			<%= stash('target_year') %> 年 <%= stash('target_month') %> 月
+		</div>
+		<div class="next-month">
+			<a href="/?target_year=<%= stash('next_year') %>&target_month=<%= stash('next_month') %>"><i class="fas fa-caret-right"></i></a>
+		</div>
 </div>
 
 <% my $expenses_hashref = stash('expenses_hashref'); %>
-<div class="card">
-	<div class="card-image-filter">
-		<%= image '/images/total-value-header.jpg', class =>'card-img-top total-value-header' %>
-		<span>今月の出費</span>
-	</div>
-	<div class="card-body">
-		<div class="total-value-box">
-			<div class="expense-item-icon">
-				<i class="fas fa-money-check-alt"></i>
-			</div>
-			<div class="card-title">総計</div>
-		</div>
-		<div class="total-value">
-			<span>&yen <%= $expenses_hashref->{'total_expenses'} %></span>
-		</div>
-	</div>
-	<ul class="list-group list-group-flush">
-		<li class="list-group-item expense-item-box">
+	<ul class="category-expenses">
+		<li class="expense-item-box">
+			<div class="expense-item">支出</div>
+			<div class="expense-item-icon"></div>
+			<div class="expense-item-value">&yen <%= $expenses_hashref->{'total_expenses'} %></div>
+		</li>
+		<li class="expense-item-box">
 			<div class="expense-item-icon">
 				<i class="fas fa-utensils"></i>
 			</div>
 			<div class="expense-item">食費</div>
 			<div class="expense-item-value">&yen <%= $expenses_hashref->{'food'} %></div>
 		</li>
-		<li class="list-group-item expense-item-box">
+		<li class="expense-item-box">
 			<div class="expense-item-icon">
 				<i class="fas fa-tshirt"></i>
 			</div>
 			<div class="expense-item">日用品</div>
 			<div class="expense-item-value">&yen <%= $expenses_hashref->{'daily_necessities'} %></div>
 		</li>
-		<li class="list-group-item expense-item-box">
+		<li class="expense-item-box">
 			<div class="expense-item-icon">
 				<i class="fas fa-bolt"></i>
 			</div>
 			<div class="expense-item">電気代</div>
 			<div class="expense-item-value">&yen <%= $expenses_hashref->{'electricity'} %></div>
 		</li>
-		<li class="list-group-item expense-item-box">
+		<li class="expense-item-box">
 			<div class="expense-item-icon">
 				<i class="fas fa-gas-pump"></i>
 			</div>
 			<div class="expense-item">ガス代</div>
 			<div class="expense-item-value">&yen <%= $expenses_hashref->{'gas'} %></div>
 		</li>
-		<li class="list-group-item expense-item-box">
+		<li class="expense-item-box">
 			<div class="expense-item-icon">
 				<i class="fas fa-faucet expense-item-icon"></i>
 			</div>
 			<div class="expense-item">水道代</div>
 			<div class="expense-item-value">&yen <%= $expenses_hashref->{'water_supply'} %></div>
 		</li>
-		<li class="list-group-item expense-item-box">
+		<li class="expense-item-box">
 			<div class="expense-item-icon">
 				<i class="fas fa-ellipsis-h expense-item-icon"></i>
 			</div>
@@ -85,7 +78,6 @@
 			<div class="expense-item-value">&yen <%= $expenses_hashref->{'others'} %></div>
 		</li>
 	</ul>
-</div>
 
 
 <div class="item-table">

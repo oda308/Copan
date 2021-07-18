@@ -18,14 +18,6 @@
 			</div>
 		</div>
 	<% } %>
-
-	
-	<section class="add-section">
-		<div class="card-image-filter">
-			<%= image '/images/total-value-header.jpg', class =>'card-img-top total-value-header' %>
-			<span>費目の追加</span>
-		</div>
-	</section>
 	
 	<section class="add-section">
 		<h5>購入日</h5>
