@@ -65,14 +65,14 @@
 		</li>
 		<li class="expense-item-box">
 			<div class="expense-item-icon">
-				<i class="fas fa-faucet expense-item-icon"></i>
+				<i class="fas fa-faucet"></i>
 			</div>
 			<div class="expense-item">水道代</div>
 			<div class="expense-item-value">&yen <%= $expenses_hashref->{'water_supply'} %></div>
 		</li>
 		<li class="expense-item-box">
 			<div class="expense-item-icon">
-				<i class="fas fa-ellipsis-h expense-item-icon"></i>
+				<i class="fas fa-ellipsis-h"></i>
 			</div>
 			<div class="expense-item">その他</div>
 			<div class="expense-item-value">&yen <%= $expenses_hashref->{'others'} %></div>

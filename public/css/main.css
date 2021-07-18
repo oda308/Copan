@@ -3,7 +3,7 @@
 }
 
 .copan-theme-color {
-	background: #0a58ca
+	background: #27AE60
 }
 
 .navbar {
@@ -98,15 +98,15 @@
 }
 
 /*** fas icon ***/
-.fa-money-check-alt,
-.fa-utensils,
-.fa-tshirt,
-.fa-bolt,
-.fa-gas-pump,
-.fa-faucet,
-.fa-ellipsis-h
+.expense-item-icon .fa-money-check-alt,
+.expense-item-icon .fa-utensils,
+.expense-item-icon .fa-tshirt,
+.expense-item-icon .fa-bolt,
+.expense-item-icon .fa-gas-pump,
+.expense-item-icon .fa-faucet,
+.expense-item-icon .fa-ellipsis-h
 {
-	color: #7992ab;
+	color: #7992ab; 
 }
 
 .fa-plus,
@@ -127,13 +127,41 @@
 	padding-left: 10px;
 }
 
-.purchase-date, 
+.purchase-input, 
 .purchase-item,
 .price {
 	width: 100%;
-	height: 50px;
+	height: 40px;
 }
 
-.purchase-date {
-	font-size: 1.5rem;
+.purchase-icon {
+	margin-right: 10px;
 }
+
+.purchase-icon i {
+	font-size: 1.2rem;
+}
+
+.purchase-input {
+	width: 90%;
+}
+
+.purchase-input input {
+	width: 100%;
+	height: 100%;
+}
+
+.purchase-box {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.purchase-category-box {
+	padding-left: 13px;
+}
+
+.purchase-category-item {
+	width: 30%;
+}
+
