@@ -1,7 +1,7 @@
 package copan::Controller::Main;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 
-sub index ($self) {
+sub login($self) {
 	
 	my $DB_CONF  = $self->app->config->{DB};
 	
@@ -19,12 +19,35 @@ sub index ($self) {
 	setStash($self, $dbh);
 
 	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
-	$self->render('index');
+	$self->render('login');
 	
 	$dbh->disconnect; #DB切断
 }
 
-sub add ($self) {
+sub expensesList($self) {
+	
+	my $DB_CONF  = $self->app->config->{DB};
+	
+	&copan::Controller::common::debug($self, $DB_CONF->{DSN});
+	&copan::Controller::common::debug($self, $DB_CONF->{USER});
+	&copan::Controller::common::debug($self, $DB_CONF->{PASS});
+	
+	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
+	
+	# 品目一覧を取得
+	my @receipt_array = &copan::Model::db::fetchReceiptList($dbh);
+	$self->stash(receipt_array => \@receipt_array);
+	# パラメーターの設定
+	
+	setStash($self, $dbh);
+
+	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
+	$self->render('expenses_list');
+	
+	$dbh->disconnect; #DB切断
+}
+
+sub add($self) {
 	
 	my $DB_CONF  = $self->app->config->{DB};
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
@@ -42,7 +65,7 @@ sub add ($self) {
 }
 
 
-sub update ($self) {
+sub update($self) {
 	
 	my $DB_CONF  = $self->app->config->{DB};
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
@@ -86,7 +109,7 @@ sub update ($self) {
 	$dbh->disconnect; #DB切断
 }
 
-sub delete ($self) {
+sub delete($self) {
 	
 	my $DB_CONF  = $self->app->config->{DB};
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続

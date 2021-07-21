@@ -22,7 +22,9 @@ sub startup {
 	my $r = $self->routes;
 
 	# コントローラーmainのindexサブルーチンを呼び出す
-	$r->get('/')->to('Main#index');
+	$r->get('/')->to('Main#login');
+	
+	$r->get('/expenses_list')->to('Main#expenses_list');
 	
 	$r->get('/add')->to('Main#add');
 	
