@@ -14,34 +14,35 @@
 	<title>Copan</title>
 </head>
 <body id="default-settings" class="d-flex flex-column h-100">
-	<div class="navbar navbar-expand-lg copan-theme-color" role="navigation">
+	<div class="navbar navbar-expand-lg copan-theme-color copan-navbar" role="navigation">
 		<div class="navbar-brand text-light">
 			Copan
 		</div>
-
-		<% 
-			if (url_for('current') eq '/add') {
-		%>
-		<form class="form-inline align-middle " action="/expensesList">
-			<button class="btn btn-outline-light" type="submit"><i id="undo-icon" class="fas fa-undo"></i></button>
-		</form>
-		% } elsif (url_for('current') eq '/expensesList') {
-		<form class="form-inline align-middle" action="/add">
-			<button class="btn btn-outline-light" type="submit"><i id="add-icon" class="fas fa-plus"></i></button>
-		</form>
-		% }
-
+		<div>
+			<button id="menu-button" class="btn" type="submit"><i id="menu-icon" class="fas fa-bars"></i></button>
+		</div>
+		
 	</div>
 	
 	<main class="main flex-shrink-0"  role="main">
 	<%= content %>
 	</main>
 	
-	<footer class="footer mt-auto copan-theme-color py-3">
-		<div class="container text-light text-center">
-			&copy;2021Copan
+	<nav class="navbar fixed-bottom copan-navbar-under copan-theme-color">
+		<div class="copan-navbar-item">
+			<% 
+				if (url_for('current') eq '/add') {
+			%>
+			<form class="form-inline align-middle " action="/expensesList">
+				<button class="btn" type="submit"><i id="undo-icon" class="fas fa-undo"></i></button>
+			</form>
+			% } elsif (url_for('current') eq '/expensesList') {
+			<form class="form-inline align-middle" action="/add">
+				<button class="btn" type="submit"><i id="add-icon" class="fas fa-plus"></i></button>
+			</form>
 		</div>
-	</footer>
+		% }
+	</nav>
 </body>
 <%= javascript  '/js/jquery-3.6.0.min.js' %>
 <%= javascript  '/js/bootstrap.bundle.min.js' %>

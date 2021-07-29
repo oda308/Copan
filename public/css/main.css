@@ -1,3 +1,7 @@
+.main {
+	padding-bottom: 100px;
+}
+
 #default-settings {
 	color: #585858;
 }
@@ -7,7 +11,9 @@
 }
 
 #undo-icon,
-#add-icon {
+#add-icon,
+#menu-icon {
+	color: white;
 	margin-right: 0px;
 }
 
@@ -19,6 +25,19 @@
 .navbar {
 	padding-left: 10px;
 	padding-right: 10px;
+}
+
+.copan-navbar-under button:focus,
+.copan-navbar button:focus {
+	box-shadow: none;
+}
+
+.copan-navbar-under {
+	text-align: center;
+}
+
+.copan-navbar-item {
+	width: 100%;
 }
 
 .notice-box {
