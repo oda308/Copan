@@ -41,7 +41,7 @@
 			<label class="btn btn-outline-primary mt-3 purchase-category-item" for="option1">
 				<div>
 				<i class="fas fa-utensils"></i>
-				<div>食費</div>
+				<div class="category-title">食費</div>
 				</div>
 			</label>
 
@@ -49,7 +49,7 @@
 			<label class="btn btn-outline-success mt-3 purchase-category-item" for="option2">
 				<div>
 					<i class="fas fa-tshirt"></i>
-					<div>日用品</div>
+					<div class="category-title">日用品</div>
 				</div>
 			</label>
 			
@@ -57,7 +57,7 @@
 			<label class="btn btn-outline-warning mt-3 purchase-category-item" for="option3">
 				<div>
 					<i class="fas fa-bolt"></i>
-					<div>電気代</div>
+					<div class="category-title">電気代</div>
 				</div>
 			</label>
 			
@@ -65,7 +65,7 @@
 			<label class="btn btn-outline-danger mt-3 purchase-category-item" for="option4">
 				<div>
 					<i class="fas fa-gas-pump"></i>
-					<div>ガス代</div>
+					<div class="category-title">ガス代</div>
 				</div>
 			</label>
 			
@@ -73,7 +73,7 @@
 			<label class="btn btn-outline-info mt-3 purchase-category-item" for="option5">
 				<div>
 					<i class="fas fa-faucet"></i>
-					<div>水道代</div>
+					<div class="category-title">水道代</div>
 				</div>
 			</label>
 			
@@ -81,7 +81,7 @@
 			<label class="btn btn-outline-secondary mt-3 purchase-category-item" for="option6">
 				<div>
 					<i class="fas fa-ellipsis-h"></i>
-					<div>その他</div>
+					<div class="category-title">その他</div>
 				</div>
 			</label>
 		</div>

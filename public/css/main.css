@@ -190,6 +190,13 @@
 
 .purchase-category-item {
 	width: 30%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.purchase-category-item .category-title {
+	font-size: 0.7rem;
+	margin-top: 10px;
 }
 
 .item-table th, 
