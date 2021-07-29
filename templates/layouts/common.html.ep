@@ -22,7 +22,7 @@
 		<% 
 			if (url_for('current') eq '/add') {
 		%>
-		<form class="form-inline align-middle " action="/">
+		<form class="form-inline align-middle " action="/expensesList">
 			<button class="btn btn-outline-light" type="submit"><i id="undo-icon" class="fas fa-undo"></i></button>
 		</form>
 		% } elsif (url_for('current') eq '/expensesList') {
