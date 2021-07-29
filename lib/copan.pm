@@ -21,10 +21,12 @@ sub startup {
 	# Router
 	my $r = $self->routes;
 
-	# コントローラーmainのindexサブルーチンを呼び出す
-	$r->get('/')->to('Main#login');
+	# コントローラーmainのログインサブルーチンを呼び出す
+	$r->get('/')->to(controller => 'Main', action => 'login');
 	
-	$r->get('/expenses_list')->to('Main#expenses_list');
+	$r->post('/')->to('Main#loginCheck');
+	
+	$r->get('/expensesList')->to('Main#expensesList');
 	
 	$r->get('/add')->to('Main#add');
 	
@@ -33,7 +35,6 @@ sub startup {
 	$r->get('/delete')->to('Main#delete');
 }
 
-# configを読み込むやつ
 sub _load_config {
 	my $self = shift;
 	

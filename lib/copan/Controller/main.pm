@@ -11,12 +11,13 @@ sub login($self) {
 	
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
 	
-	# 品目一覧を取得
-	my @receipt_array = &copan::Model::db::fetchReceiptList($dbh);
-	$self->stash(receipt_array => \@receipt_array);
-	# パラメーターの設定
+	&copan::Controller::common::debug($self, "login()");
 	
-	setStash($self, $dbh);
+	# パラメーターの設定
+	#setStash($self, $dbh);
+
+	&copan::Controller::common::debug($self, "error_message" . $self->param('error_message'));
+	&copan::Controller::common::debug($self, "error_message" . $self->param('sessionExpired'));
 
 	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
 	$self->render('login');
@@ -24,7 +25,7 @@ sub login($self) {
 	$dbh->disconnect; #DB切断
 }
 
-sub expensesList($self) {
+sub loginCheck($self) {
 	
 	my $DB_CONF  = $self->app->config->{DB};
 	
@@ -34,6 +35,68 @@ sub expensesList($self) {
 	
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
 	
+	my $is_success = 0;
+	my $error_user_name = "";
+	my $error_password = "";
+	
+	# ユーザー名とパスワードを取得出来た時だけ処理
+	if ($self->param('user_name') && $self->param('password')) {
+		# 取得したパスワードのハッシュ化
+		my $password_hash = &copan::Model::db::fetchPasswordHash($dbh, $self, $self->param('user_name'));
+		
+		&copan::Controller::common::debug($self, $password_hash);
+		
+		#　ハッシュ化されたパスワードの取得が出来た時照合する
+		if ($password_hash) {
+			$is_success = &copan::Controller::common::checkPassword($self->param('password'), $password_hash);
+		}
+	
+		if (!$is_success) {
+			$self->stash(error_message => 'ユーザー名 / パスワードに誤りがあります') 
+		}
+	
+	# ユーザー名、またはパスワードが入力されていない
+	} else {
+		$self->stash(error_message => 'ユーザー名 / パスワードに誤りがあります') 
+	}
+	
+	if ($is_success) { # ログインに成功
+		&copan::Controller::common::debug($self, "Login success");
+		
+		my $id = &copan::Controller::common::createSessionId();
+		&copan::Controller::common::debug($self, $id);
+		
+		$self->session(id => $id);
+		
+		$self->redirect_to('/expensesList');
+	} else {  # ログインに失敗
+		&copan::Controller::common::debug($self, "Login failed");
+		$self->stash(error_user_name => $error_user_name);
+		$self->stash(error_password => $error_password);
+		$self->render('/login');
+	}
+	
+	$dbh->disconnect; #DB切断
+}
+
+sub expensesList($self) {
+	
+	if (!$self->session('id')) {
+		$self->redirect_to('/?sessionExpired=1');
+	}
+	
+	my $DB_CONF  = $self->app->config->{DB};
+	
+	&copan::Controller::common::debug($self, $DB_CONF->{DSN});
+	&copan::Controller::common::debug($self, $DB_CONF->{USER});
+	&copan::Controller::common::debug($self, $DB_CONF->{PASS});
+	
+	&copan::Controller::common::debug($self, $self->session('id'));
+	
+	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
+	
+	&copan::Controller::common::debug($self, $self->session('id'));
+	
 	# 品目一覧を取得
 	my @receipt_array = &copan::Model::db::fetchReceiptList($dbh);
 	$self->stash(receipt_array => \@receipt_array);
@@ -42,12 +105,16 @@ sub expensesList($self) {
 	setStash($self, $dbh);
 
 	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
-	$self->render('expenses_list');
+	$self->render('expensesList');
 	
 	$dbh->disconnect; #DB切断
 }
 
 sub add($self) {
+	
+	if (!$self->session('id')) {
+		$self->redirect_to('/?sessionExpired=1');
+	}
 	
 	my $DB_CONF  = $self->app->config->{DB};
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
@@ -66,6 +133,10 @@ sub add($self) {
 
 
 sub update($self) {
+	
+	if (!$self->session('id')) {
+		$self->redirect_to('/?sessionExpired=1');
+	}
 	
 	my $DB_CONF  = $self->app->config->{DB};
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
@@ -104,12 +175,16 @@ sub update($self) {
 			$self->stash(success_message => "計上が完了しました");
 		}
 		
-		$self->render('index');
+		$self->render('expensesList');
 	}
 	$dbh->disconnect; #DB切断
 }
 
 sub delete($self) {
+	
+	if (!$self->session('id')) {
+		$self->redirect_to('/?sessionExpired=1');
+	}
 	
 	my $DB_CONF  = $self->app->config->{DB};
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続

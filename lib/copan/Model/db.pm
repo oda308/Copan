@@ -370,4 +370,36 @@ sub fetchOthers {
 	
 	return $others;
 }
+
+## -------------------------------------------------------------------
+## ユーザー名からハッシュ化されたパスワードを取得する
+## -------------------------------------------------------------------
+sub fetchPasswordHash {
+	
+	my ($dbh, $self, $user_name) = @_;
+	
+	if (!$user_name) {
+		return;
+	}
+	
+	my $password = "";
+	
+	my $sql = qq{SELECT password FROM user };
+	$sql .= qq{WHERE user_name = "$user_name" };
+	
+	&copan::Controller::common::debug($self, $sql);
+	
+	my $sth = $dbh->prepare($sql);
+	$sth->execute();
+	
+	&copan::Controller::common::debug($self, $sth->rows);
+	
+	if ($sth->rows) {
+		($password) = $sth->fetchrow_array;
+	}
+	
+	$sth->finish;
+	
+	return $password;
+}
 1;

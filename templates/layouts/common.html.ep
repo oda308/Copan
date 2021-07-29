@@ -7,7 +7,7 @@
 	<%= stylesheet '/css/bootstrap.min.css' %>
 	<%= stylesheet '/css/main.css' %>
 	<% # ログインページを表示する場合、login.cssをインポート { %>
-	<% if ($current eq '/') { %>
+	<% if (url_for('current') eq '/') { %>
 	<%= stylesheet '/css/login.css' %>
 	<% } %>
 	<script src="https://kit.fontawesome.com/a3467d4ec0.js" crossorigin="anonymous"></script>
@@ -18,13 +18,14 @@
 		<div class="navbar-brand text-light">
 			Copan
 		</div>
+
 		<% 
-			if ($current eq '/add') {
+			if (url_for('current') eq '/add') {
 		%>
 		<form class="form-inline align-middle " action="/">
 			<button class="btn btn-outline-light" type="submit"><i id="undo-icon" class="fas fa-undo"></i></button>
 		</form>
-		% } elsif ($current eq '/expenses_list') {
+		% } elsif (url_for('current') eq '/expensesList') {
 		<form class="form-inline align-middle" action="/add">
 			<button class="btn btn-outline-light" type="submit"><i id="add-icon" class="fas fa-plus"></i></button>
 		</form>
