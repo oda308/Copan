@@ -97,11 +97,7 @@ sub expensesList($self) {
 	
 	&copan::Controller::common::debug($self, $self->session('id'));
 	
-	# 品目一覧を取得
-	my @receipt_array = &copan::Model::db::fetchReceiptList($dbh);
-	$self->stash(receipt_array => \@receipt_array);
 	# パラメーターの設定
-	
 	setStash($self, $dbh);
 
 	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
@@ -119,9 +115,6 @@ sub add($self) {
 	my $DB_CONF  = $self->app->config->{DB};
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
 	
-	# 品目一覧を取得
-	my @receipt_array = &copan::Model::db::fetchTodayReceiptList($dbh, $self);
-	$self->stash(receipt_array => \@receipt_array);
 	# パラメーターの設定
 	setStash($self, $dbh);
 	
@@ -156,9 +149,6 @@ sub update($self) {
 		&common::debug($self, $err);
 	}
 	
-	# 品目一覧を取得
-	my @receipt_array = &copan::Model::db::fetchReceiptList($dbh);
-	$self->stash(receipt_array => \@receipt_array);
 	# パラメーターの設定
 	setStash($self, $dbh);
 	
@@ -206,9 +196,6 @@ sub delete($self) {
 		$self->stash(error_message => "選択された削除項目が存在しません");
 	}
 	
-	# 品目一覧を取得
-	my @receipt_array = &copan::Model::db::fetchTodayReceiptList($dbh);
-	$self->stash(receipt_array => \@receipt_array);
 	# パラメーターの設定
 	setStash($self, $dbh);
 	
@@ -265,8 +252,11 @@ sub setStash {
 	my %date_previous_month = &copan::Controller::date::getPreviousMonth($target_year, $target_month);
 	my %date_next_month = &copan::Controller::date::getNextMonth($target_year, $target_month);
 	
+	# 品目一覧を取得
+	my @receipt_array = &copan::Model::db::fetchCurrentMonthReceiptList($dbh, $self, $target_year, $target_month);
+	
 	# 表示する年月の出費をカテゴリ別に取得
-	my %expenses_hash = &copan::Model::db::fetchAllExpenses($dbh, $self);
+	my %expenses_hash = &copan::Model::db::fetchAllExpenses($dbh, $self, $target_year, $target_month);
 	
 	$self->stash(
 		current => $url,
@@ -277,6 +267,7 @@ sub setStash {
 		previous_month => $date_previous_month{'month'},
 		next_year => $date_next_month{'year'}, 			# 表示する年月の一月後を格納
 		next_month => $date_next_month{'month'},
+		receipt_array => \@receipt_array,
 		expenses_hashref => \%expenses_hash,
 	);
 	
