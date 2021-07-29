@@ -1,17 +1,17 @@
 % layout 'common', title => 'Index';
 
-<% if (stash('success_message')) { %>
+<% if (flash('success_message')) { %>
 <div class="notice-box">
 	<div class="alert alert-success" role="alert">
-		<%= stash('success_message') %>
+		<%= flash('success_message') %>
 	</div>
 </div>
 <% } %>
 
-<% if (stash('error_message')) { %>
+<% if (flash('error_message')) { %>
 	<div class="notice-box">
 		<div class="alert alert-danger" role="alert">
-			<%= stash('error_message') %>
+			<%= flash('error_message') %>
 		</div>
 	</div>
 <% } %>

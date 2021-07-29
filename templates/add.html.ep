@@ -3,18 +3,20 @@
 
 <form action="/update" name="add">
 
-	<% if (stash('success_message')) { %>
+	<% if (flash 'success_message') { %>
 	<div class="notice-box">
 		<div class="alert alert-success" role="alert">
-			<%= stash('success_message') %>
+			<%= flash 'success_message'  %>
 		</div>
 	</div>
 	<% } %>
 	
-	<% if (stash('error_message')) { %>
+	<% if (flash 'error_message') { %>
 		<div class="notice-box">
 			<div class="alert alert-danger" role="alert">
-				<%= stash('error_message') %>
+				<% foreach my $error_message (@{flash 'error_message'}) { %>
+				<div><%= $error_message %></div>
+				<% } %>
 			</div>
 		</div>
 	<% } %>

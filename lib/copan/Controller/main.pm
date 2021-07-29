@@ -19,6 +19,8 @@ sub login($self) {
 	&copan::Controller::common::debug($self, "error_message" . $self->param('error_message'));
 	&copan::Controller::common::debug($self, "error_message" . $self->param('sessionExpired'));
 
+	$self->stash("error_message");
+
 	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
 	$self->render('login');
 	
@@ -146,26 +148,28 @@ sub update($self) {
 	my $error_messages_length = @error_messages;
 	
 	foreach my $err (@error_messages) {
-		&common::debug($self, $err);
+		&copan::Controller::common::debug($self, $err);
 	}
 	
 	# パラメーターの設定
 	setStash($self, $dbh);
 	
 	if ($error_messages_length) {
-		$self->stash(error_message => \@error_messages);
-		$self->render('/add');
+		$self->flash(error_message => \@error_messages);
+		$self->redirect_to('add');
 	} else {
 		# 入力内容を計上
 		my $result = &copan::Model::db::updateReceiptList(\%input_data, $dbh);
 		
-		if (!$result) {
-			$self->stash(error_message => "計上に失敗しました");
-		} else {
-			$self->stash(success_message => "計上が完了しました");
-		}
+		my $error_message = "";
+		my $success_message = "";
 		
-		$self->render('expensesList');
+		if (!$result) {
+			$self->flash(error_message => '計上に失敗しました');
+		} else {
+			$self->flash(success_message => '計上が完了しました');
+		}
+		$self->redirect_to('expensesList');
 	}
 	$dbh->disconnect; #DB切断
 }
