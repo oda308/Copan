@@ -76,6 +76,7 @@
 
 .expense-item-box {
 	display: flex;
+	align-items: baseline;
 	border-bottom: solid 1px #dee2e6;
 	padding: 15px 10px;
 }
@@ -142,7 +143,6 @@
 .fa-undo {
 	margin-right: 0.5rem;
 }
-
 
 /*** 費目追加ページ ***/
 

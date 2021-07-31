@@ -9,17 +9,15 @@
 			</div>
 			<% } %>
 			
-			<label for="user_name">
-				<b>Username</b>
-			</label>
-			<input type="text" placeholder="Enter Username" name="user_name" required>
+			<h1 id="login-title">Copan</h1>
 			
-			<label for="password"><b>Password</b></label>
-			<input type="password" placeholder="Enter Password" name="password" required>
+			<input id="input-username" type="text" placeholder="ユーザー名" name="user_name" required>
 			
-			<button type="submit">Login</button>
+			<input id="input-password" type="password" placeholder="パスワード" name="password" required>
+			
+			<button id="login-button" class="copan-theme-color" type="submit">ログイン</button>
 			<label>
-			<input type="checkbox" checked="checked" name="remember"> Remember me
+			<input type="checkbox" checked="checked" name="remember"> ログイン状態を保持する
 		  </label>
 		</div>
 	</form>

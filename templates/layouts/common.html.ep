@@ -18,15 +18,19 @@
 		<div class="navbar-brand text-light">
 			Copan
 		</div>
+		
+		<% if (url_for('current') ne '/') { # ログインページはメニューボタンを非表示にする %>
 		<div>
 			<button id="menu-button" class="btn" type="submit"><i id="menu-icon" class="fas fa-bars"></i></button>
 		</div>
-		
+		<% } %>
 	</div>
 	
 	<main class="main flex-shrink-0"  role="main">
 	<%= content %>
 	</main>
+	
+	<% if (url_for('current') ne '/') { # メニューバー(下)を表示する %>
 	
 	<nav class="navbar fixed-bottom copan-navbar-under copan-theme-color">
 		<div class="copan-navbar-item">
@@ -43,6 +47,14 @@
 		</div>
 		% }
 	</nav>
+	
+	<% } else {  # ログインページではメニューバー(下)を表示せず、代わりにフッターを追加する %>
+	<footer class="footer mt-auto copan-theme-color">
+		<div class="container text-light text-center">
+			&copy;2021Copan
+		</div>
+	</footer>
+	<% } %>
 </body>
 <%= javascript  '/js/jquery-3.6.0.min.js' %>
 <%= javascript  '/js/bootstrap.bundle.min.js' %>

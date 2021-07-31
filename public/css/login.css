@@ -1,11 +1,14 @@
-body {
-	background: #f1f1f1;
-}
 	
 .login-box {
-	margin: 5px;
 	padding: 50px 0px;
-	background: white;
+}
+
+#login-title {
+	margin-bottom: 30px;
+}
+
+#login-button {
+	margin-top: 30px;
 }
 
 /* Full-width inputs */
@@ -20,7 +23,6 @@ input[type=text], input[type=password] {
 
 /* Set a style for all buttons */
 button {
-    background-color: #4CAF50;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
