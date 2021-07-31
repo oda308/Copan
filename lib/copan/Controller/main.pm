@@ -40,11 +40,13 @@ sub loginCheck($self) {
 	my $is_success = 0;
 	my $error_user_name = "";
 	my $error_password = "";
+	my $user_id = "";
+	my $password_hash = "";
 	
 	# ユーザー名とパスワードを取得出来た時だけ処理
 	if ($self->param('user_name') && $self->param('password')) {
 		# 取得したパスワードのハッシュ化
-		my $password_hash = &copan::Model::db::fetchPasswordHash($dbh, $self, $self->param('user_name'));
+		($user_id, $password_hash) = &copan::Model::db::fetchPasswordHash($dbh, $self, $self->param('user_name'));
 		
 		&copan::Controller::common::debug($self, $password_hash);
 		
@@ -54,12 +56,12 @@ sub loginCheck($self) {
 		}
 	
 		if (!$is_success) {
-			$self->stash(error_message => 'ユーザー名 / パスワードに誤りがあります') 
+			$self->stash(error_message => 'ユーザー名 / パスワードに誤りがあります');
 		}
 	
 	# ユーザー名、またはパスワードが入力されていない
 	} else {
-		$self->stash(error_message => 'ユーザー名 / パスワードに誤りがあります') 
+		$self->stash(error_message => 'ユーザー名 / パスワードに誤りがあります');
 	}
 	
 	if ($is_success) { # ログインに成功
@@ -68,13 +70,19 @@ sub loginCheck($self) {
 		my $id = &copan::Controller::common::createSessionId();
 		&copan::Controller::common::debug($self, $id);
 		
-		$self->session(id => $id);
+		my $is_success = &copan::Model::db::saveSessionId($dbh, $self, $id, $user_id);
 		
-		$self->redirect_to('/expensesList');
-	} else {  # ログインに失敗
+		if ($is_success) {
+			$self->session(id => $id);
+			$self->session(user_id => $user_id);
+			$self->redirect_to('/expensesList');
+		} else { # session_idの保存に失敗
+			&copan::Controller::common::debug($self, "Failed to saving session id.");
+			$self->stash(error_message => 'ログイン処理に失敗しました');
+			$self->render('/login');
+		}
+	} else { # ログインに失敗
 		&copan::Controller::common::debug($self, "Login failed");
-		$self->stash(error_user_name => $error_user_name);
-		$self->stash(error_password => $error_password);
 		$self->render('/login');
 	}
 	
@@ -83,21 +91,22 @@ sub loginCheck($self) {
 
 sub expensesList($self) {
 	
-	if (!$self->session('id')) {
-		$self->redirect_to('/?sessionExpired=1');
-	}
+	my $user_id = 0;
+	my $user_name = 0;
 	
 	my $DB_CONF  = $self->app->config->{DB};
-	
-	&copan::Controller::common::debug($self, $DB_CONF->{DSN});
-	&copan::Controller::common::debug($self, $DB_CONF->{USER});
-	&copan::Controller::common::debug($self, $DB_CONF->{PASS});
-	
-	&copan::Controller::common::debug($self, $self->session('id'));
-	
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
 	
 	&copan::Controller::common::debug($self, $self->session('id'));
+	
+	if (!$self->session('id')) {
+		$self->redirect_to('/?sessionExpired=1');
+	}
+	else
+	{
+		($user_id, $user_name) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
+		$self->stash(user_name => $user_name);
+	}
 	
 	# パラメーターの設定
 	setStash($self, $dbh);
@@ -110,12 +119,20 @@ sub expensesList($self) {
 
 sub add($self) {
 	
+	my $DB_CONF  = $self->app->config->{DB};
+	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
+	
+	my $user_id = 0;
+	my $user_name = 0;
+	
 	if (!$self->session('id')) {
 		$self->redirect_to('/?sessionExpired=1');
 	}
-	
-	my $DB_CONF  = $self->app->config->{DB};
-	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
+	else
+	{
+		($user_id, $user_name) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
+		$self->stash(user_name => $user_name);
+	}
 	
 	# パラメーターの設定
 	setStash($self, $dbh);

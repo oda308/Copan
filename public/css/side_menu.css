@@ -2,7 +2,7 @@ body {
 	position: relative;
 }
 
-.overray {
+.overlay {
 	display: none;
 	position: absolute;
 	background: black;
@@ -12,28 +12,34 @@ body {
 	opacity: 0.7;
 }
 
-.side_menu {
+.side-menu {
 	z-index: 1032;
 	display: none;
 }
 
+.user-info {
+	padding: 20px 30px;
+	font-weight: bold;
+	font-size: 1.1rem;
+}
+
 /* PEN STYLES ========== */
 a,
-.side_menu {
+.side-menu {
 	-webkit-transition: all 300ms ease-in-out;
 	transition: all 300ms ease-in-out;
 }
 
 /* MENU CONTAINER ----- */
-	.side_menu {
-		background: rgba(0,20,60,.9);
+	.side-menu {
+		background: white;
 		height: 100vh;
 		right: -250px;
 		position: absolute;
 		top: 0;
 		width: 250px;
 	}
-	.side_menu .container {
+	.side-menu .container {
 		padding: 0 1em;
 	}
 
@@ -57,7 +63,7 @@ a,
 		opacity: 1;
 	}
 	.burger_box a.menu-icon.opened {
-		background: rgba(0,20,60,.9);
+		background: white;
 	}
 	.burger_box .menu-icon_box {
 		display: inline-block;
@@ -67,7 +73,7 @@ a,
 		width: 25px;
 	}
 	.burger_box .menu-icon_line {
-		background: #fff;
+		background: black;
 		border-radius: 2px;
 		display: inline-block;
 		height: 3px;
@@ -122,18 +128,14 @@ a,
 
 /* STAGGER LIST ----- */
 	.list_load {
-		display: none;
 		list-style: none;
 		padding: 0;
 	}
 	.list_item {
-		margin-left: -20px;
-		opacity: 0;
-		-webkit-transition: all 200ms ease-in-out;
-		transition: all 200ms ease-in-out;
+		padding: 5px 30px;
 	}
 	.list_item a {
-		color: #fff;
+		color: inherit;
 		display: block;
 		padding: 5px 10px;
 		text-decoration: none;

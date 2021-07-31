@@ -405,8 +405,11 @@ sub fetchPasswordHash {
 	}
 	
 	my $password = "";
+	my $user_id = "";
 	
-	my $sql = qq{SELECT password FROM user };
+	my $sql = qq{SELECT user_id, };
+	$sql .= qq{password };
+	$sql .= qq{FROM user };
 	$sql .= qq{WHERE user_name = "$user_name" };
 	
 	&copan::Controller::common::debug($self, $sql);
@@ -417,11 +420,95 @@ sub fetchPasswordHash {
 	&copan::Controller::common::debug($self, $sth->rows);
 	
 	if ($sth->rows) {
-		($password) = $sth->fetchrow_array;
+		($user_id, $password) = $sth->fetchrow_array;
 	}
 	
 	$sth->finish;
 	
-	return $password;
+	return ($user_id, $password);
 }
+
+## -------------------------------------------------------------------
+## セッションIDと紐づくuser_idを保存する
+## -------------------------------------------------------------------
+sub saveSessionId {
+	
+	my ($dbh, $self, $session_id, $user_id) = @_;
+	
+	my $is_success = 0;
+	
+	if (!$session_id || !$user_id) {
+		return $is_success;
+	}
+	
+	my $sql = qq{SELECT COUNT(*) };
+	$sql .= qq{FROM session_manager };
+	$sql .= qq{WHERE session_id = "$session_id" };
+	
+	&copan::Controller::common::debug($self, $sql);
+	
+	my $sth = $dbh->prepare($sql);
+	$sth->execute();
+	
+	my ($count) = $sth->fetchrow_array;
+	&copan::Controller::common::debug($self, $count);
+	
+	$sth->finish;
+	
+	if ($count == 0) {
+		my $sql2 = qq{INSERT INTO session_manager ( };
+		$sql2 .= qq{session_id, };
+		$sql2 .= qq{user_id };
+		$sql2 .= qq{) VALUES ( };
+		$sql2 .= qq{"$session_id", };
+		$sql2 .= qq{"$user_id" };
+		$sql2 .= qq{) };
+		
+		my $sth2 = $dbh->prepare($sql2) or die $dbh->errstr;
+		my $rv = $sth2->execute();
+		
+		if ($rv) {
+			$is_success = 1;
+		}
+	}
+	
+	return $is_success;
+}
+
+## -------------------------------------------------------------------
+## セッションIDからユーザーIDを取得する
+## -------------------------------------------------------------------
+sub fetchUserData {
+	
+	my ($dbh, $self, $session_id) = @_;
+	
+	if (!$session_id) {
+		return;
+	}
+	
+	my $user_id = 0;
+	my $user_name = "";
+	
+	my $sql = qq{SELECT user.user_id, };
+	$sql .= qq{user.user_name };
+	$sql .= qq{FROM session_manager };
+	$sql .= qq{JOIN user ON user.user_id = session_manager.user_id };
+	$sql .= qq{WHERE session_id = "$session_id" };
+	
+	&copan::Controller::common::debug($self, $sql);
+	
+	my $sth = $dbh->prepare($sql);
+	$sth->execute();
+	
+	&copan::Controller::common::debug($self, $sth->rows);
+	
+	if ($sth->rows) {
+		($user_id, $user_name) = $sth->fetchrow_array;
+	}
+	
+	$sth->finish;
+	
+	return ($user_id, $user_name);
+}
+
 1;

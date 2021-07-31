@@ -15,7 +15,7 @@
 	<title>Copan</title>
 </head>
 <body id="default-settings" class="d-flex flex-column h-100">
-	<div class="overray">
+	<div class="overlay">
 	</div>
 	<div class="navbar navbar-expand-lg copan-theme-color copan-navbar" role="navigation">
 		<div class="navbar-brand text-light">
