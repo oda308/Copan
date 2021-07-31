@@ -12,9 +12,13 @@
 
 #undo-icon,
 #add-icon,
-#menu-icon {
+.menu-icon {
 	color: white;
 	margin-right: 0px;
+}
+
+.menu-icon {
+	font-size: 1.5rem;
 }
 
 .fa-caret-right,
@@ -23,8 +27,8 @@
 }
 
 .navbar {
-	padding-left: 10px;
-	padding-right: 10px;
+	padding-left: 20px;
+	padding-right: 20px;
 }
 
 .copan-navbar-under button:focus,

@@ -6,23 +6,24 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<%= stylesheet '/css/bootstrap.min.css' %>
 	<%= stylesheet '/css/main.css' %>
-	<% # ログインページを表示する場合、login.cssをインポート { %>
-	<% if (url_for('current') eq '/') { %>
+	<% if (url_for('current') eq '/') { # ログインページを表示する場合、login.cssをインポート %>
 	<%= stylesheet '/css/login.css' %>
-	<% } %>
+	<% } else { # それ以外を表示する場合、再度メニュー表示用ファイルをインポート  %>
+	<%= stylesheet '/css/side_menu.css' %>
+	<% }%>
 	<script src="https://kit.fontawesome.com/a3467d4ec0.js" crossorigin="anonymous"></script>
 	<title>Copan</title>
 </head>
 <body id="default-settings" class="d-flex flex-column h-100">
+	<div class="overray">
+	</div>
 	<div class="navbar navbar-expand-lg copan-theme-color copan-navbar" role="navigation">
 		<div class="navbar-brand text-light">
 			Copan
 		</div>
 		
 		<% if (url_for('current') ne '/') { # ログインページはメニューボタンを非表示にする %>
-		<div>
-			<button id="menu-button" class="btn" type="submit"><i id="menu-icon" class="fas fa-bars"></i></button>
-		</div>
+			<%= include 'sideMenu' %>
 		<% } %>
 	</div>
 	
@@ -58,4 +59,7 @@
 </body>
 <%= javascript  '/js/jquery-3.6.0.min.js' %>
 <%= javascript  '/js/bootstrap.bundle.min.js' %>
+<% if (url_for('current') ne '/') { # ログインページを以外を表示する場合、sidemenuを表示するファイルをインポート %>
+	<%= javascript '/js/side_menu.js' %>
+<% }%>
 </html>

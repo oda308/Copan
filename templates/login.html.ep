@@ -16,9 +16,8 @@
 			<input id="input-password" type="password" placeholder="パスワード" name="password" required>
 			
 			<button id="login-button" class="copan-theme-color" type="submit">ログイン</button>
-			<label>
+			
 			<input type="checkbox" checked="checked" name="remember"> ログイン状態を保持する
-		  </label>
 		</div>
 	</form>
 </div>
