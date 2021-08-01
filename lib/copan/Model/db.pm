@@ -32,19 +32,23 @@ sub connectDB {
 ## -------------------------------------------------------------------
 sub updateReceiptList {
 	
-	my ($input_data_ref, $dbh) = @_;
+	my ($dbh, $self, $input_data_ref, $user_id) = @_;
 	
 	my $sql = qq{INSERT INTO receipt_list ( };
 	$sql .= qq{purchase_date, };
 	$sql .= qq{category, };
 	$sql .= qq{item, };
-	$sql .= qq{price };
+	$sql .= qq{price, };
+	$sql .= qq{user_id };
 	$sql .= qq{) VALUES ( };
 	$sql .= qq{\"$input_data_ref->{'purchase_date'}\", };
 	$sql .= qq{\"$input_data_ref->{'category'}\", };
 	$sql .= qq{\"$input_data_ref->{'item'}\", };
-	$sql .= qq{\"$input_data_ref->{'price'}\" };
+	$sql .= qq{\"$input_data_ref->{'price'}\", };
+	$sql .= qq{$user_id };
 	$sql .= qq{) };
+	
+	&copan::Controller::common::debug($self, $sql);
 	
 	my $sth = $dbh->prepare($sql) or die $dbh->errstr;
 	my $rv = $sth->execute();

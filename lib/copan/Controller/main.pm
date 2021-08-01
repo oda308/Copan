@@ -146,12 +146,20 @@ sub add($self) {
 
 sub update($self) {
 	
+	my $DB_CONF  = $self->app->config->{DB};
+	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
+	
+	my $user_id = 0;
+	my $user_name = 0;
+	
 	if (!$self->session('id')) {
 		$self->redirect_to('/?sessionExpired=1');
 	}
-	
-	my $DB_CONF  = $self->app->config->{DB};
-	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
+	else
+	{
+		($user_id, $user_name) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
+		$self->stash(user_name => $user_name);
+	}
 	
 	# 費目の追加で入力された項目を取得
 	my %input_data = ();
@@ -176,7 +184,7 @@ sub update($self) {
 		$self->redirect_to('add');
 	} else {
 		# 入力内容を計上
-		my $result = &copan::Model::db::updateReceiptList(\%input_data, $dbh);
+		my $result = &copan::Model::db::updateReceiptList($dbh, $self, \%input_data, $user_id);
 		
 		my $error_message = "";
 		my $success_message = "";
