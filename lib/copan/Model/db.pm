@@ -32,20 +32,22 @@ sub connectDB {
 ## -------------------------------------------------------------------
 sub updateReceiptList {
 	
-	my ($dbh, $self, $input_data_ref, $user_id) = @_;
+	my ($dbh, $self, $input_data_ref, $user_id, $group_id) = @_;
 	
 	my $sql = qq{INSERT INTO receipt_list ( };
 	$sql .= qq{purchase_date, };
 	$sql .= qq{category, };
 	$sql .= qq{item, };
 	$sql .= qq{price, };
-	$sql .= qq{user_id };
+	$sql .= qq{user_id, };
+	$sql .= qq{group_id };
 	$sql .= qq{) VALUES ( };
 	$sql .= qq{\"$input_data_ref->{'purchase_date'}\", };
 	$sql .= qq{\"$input_data_ref->{'category'}\", };
 	$sql .= qq{\"$input_data_ref->{'item'}\", };
 	$sql .= qq{\"$input_data_ref->{'price'}\", };
 	$sql .= qq{$user_id };
+	$sql .= qq{$group_id };
 	$sql .= qq{) };
 	
 	&copan::Controller::common::debug($self, $sql);
@@ -492,9 +494,11 @@ sub fetchUserData {
 	
 	my $user_id = 0;
 	my $user_name = "";
+	my $group_id = 0;
 	
 	my $sql = qq{SELECT user.user_id, };
-	$sql .= qq{user.user_name };
+	$sql .= qq{user.user_name, };
+	$sql .= qq{user.group_id };
 	$sql .= qq{FROM session_manager };
 	$sql .= qq{JOIN user ON user.user_id = session_manager.user_id };
 	$sql .= qq{WHERE session_id = "$session_id" };
@@ -507,12 +511,46 @@ sub fetchUserData {
 	&copan::Controller::common::debug($self, $sth->rows);
 	
 	if ($sth->rows) {
-		($user_id, $user_name) = $sth->fetchrow_array;
+		($user_id, $user_name, $group_id) = $sth->fetchrow_array;
 	}
 	
 	$sth->finish;
 	
-	return ($user_id, $user_name);
+	return ($user_id, $user_name, $group_id);
 }
 
+## -------------------------------------------------------------------
+## 同じグループに所属する自分以外のユーザーネームを取得する
+## -------------------------------------------------------------------
+sub fetchGroupUserName {
+	
+	my ($dbh, $self, $user_id, $group_id) = @_;
+	
+	if (!$user_id) {
+		return;
+	}
+	
+	my @group_user_name_array = ();
+	
+	my $sql = qq{SELECT user_name };
+	$sql .= qq{FROM user };
+	$sql .= qq{WHERE group_id = $group_id };
+	$sql .= qq{AND user_id != $user_id };
+	$sql .= qq{ORDER BY user_id };
+	
+	&copan::Controller::common::debug($self, $sql);
+	
+	my $sth = $dbh->prepare($sql);
+	$sth->execute();
+	
+	&copan::Controller::common::debug($self, $sth->rows);
+	
+	while (my ($user_name) = $sth->fetchrow_array) {
+		push(@group_user_name_array, $user_name);
+	}
+	
+	$sth->finish;
+	
+	return @group_user_name_array;
+}
 1;

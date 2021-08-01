@@ -22,9 +22,11 @@ sub startup {
 	my $r = $self->routes;
 
 	# コントローラーmainのログインサブルーチンを呼び出す
-	$r->get('/')->to(controller => 'Main', action => 'login');
+	$r->get('/')->to('Main#login');
 	
 	$r->post('/')->to('Main#loginCheck');
+	
+	$r->get('/logout')->to('Main#logout');
 	
 	$r->get('/expensesList')->to('Main#expensesList');
 	
@@ -33,6 +35,8 @@ sub startup {
 	$r->get('/update')->to('Main#update');
 	
 	$r->get('/delete')->to('Main#delete');
+	
+	$r->get('/sharedUserList')->to('Main#sharedUserList');
 }
 
 sub _load_config {

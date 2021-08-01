@@ -27,6 +27,30 @@ sub login($self) {
 	$dbh->disconnect; #DB切断
 }
 
+sub logout($self) {
+	
+	my $DB_CONF  = $self->app->config->{DB};
+	
+	&copan::Controller::common::debug($self, $DB_CONF->{DSN});
+	&copan::Controller::common::debug($self, $DB_CONF->{USER});
+	&copan::Controller::common::debug($self, $DB_CONF->{PASS});
+	
+	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
+	
+	&copan::Controller::common::debug($self, "logout()");
+
+	# セッションの破棄
+	if ($self->session('id')) {
+		&copan::Controller::common::debug($self, "Discard session.");
+		$self->session(expires => 1);
+	}
+
+	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
+	$self->redirect_to('/?sessionExpired=1');
+	
+	$dbh->disconnect; #DB切断
+}
+
 sub loginCheck($self) {
 	
 	my $DB_CONF  = $self->app->config->{DB};
@@ -104,7 +128,7 @@ sub expensesList($self) {
 	}
 	else
 	{
-		($user_id, $user_name) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
+		($user_id, $user_name, undef) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
 		$self->stash(user_name => $user_name);
 	}
 	
@@ -130,7 +154,7 @@ sub add($self) {
 	}
 	else
 	{
-		($user_id, $user_name) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
+		($user_id, $user_name, undef) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
 		$self->stash(user_name => $user_name);
 	}
 	
@@ -151,13 +175,14 @@ sub update($self) {
 	
 	my $user_id = 0;
 	my $user_name = 0;
+	my $group_id = 0;
 	
 	if (!$self->session('id')) {
 		$self->redirect_to('/?sessionExpired=1');
 	}
 	else
 	{
-		($user_id, $user_name) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
+		($user_id, $user_name, $group_id) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
 		$self->stash(user_name => $user_name);
 	}
 	
@@ -184,7 +209,7 @@ sub update($self) {
 		$self->redirect_to('add');
 	} else {
 		# 入力内容を計上
-		my $result = &copan::Model::db::updateReceiptList($dbh, $self, \%input_data, $user_id);
+		my $result = &copan::Model::db::updateReceiptList($dbh, $self, \%input_data, $user_id, $group_id);
 		
 		my $error_message = "";
 		my $success_message = "";
@@ -229,6 +254,39 @@ sub delete($self) {
 	setStash($self, $dbh);
 	
 	$self->render('/add');
+	
+	$dbh->disconnect; #DB切断
+}
+
+sub sharedUserList($self) {
+	
+	my $user_id = 0;
+	my $user_name = 0;
+	my $group_id = 0;
+	
+	my $DB_CONF  = $self->app->config->{DB};
+	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
+	
+	&copan::Controller::common::debug($self, $self->session('id'));
+	
+	if (!$self->session('id')) {
+		$self->redirect_to('/?sessionExpired=1');
+	}
+	else
+	{
+		($user_id, $user_name, $group_id) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
+		$self->stash(user_name => $user_name);
+	}
+	
+	# 自分と同じグループIDのユーザー名を配列で取得する(自分以外)
+	my @group_user_name_array = &copan::Model::db::fetchGroupUserName($dbh, $self, $user_id, $group_id);
+	$self->stash(group_user_name_arrayref => \@group_user_name_array);
+	
+	# パラメーターの設定
+	setStash($self, $dbh);
+
+	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
+	$self->render('sharedUserList');
 	
 	$dbh->disconnect; #DB切断
 }

@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<%= stylesheet '/css/bootstrap.min.css' %>
 	<%= stylesheet '/css/main.css' %>
+	<%= stylesheet '/css/shared_user_list.css' %>
 	<% if (url_for('current') eq '/') { # ログインページを表示する場合、login.cssをインポート %>
 	<%= stylesheet '/css/login.css' %>
 	<% } else { # それ以外を表示する場合、再度メニュー表示用ファイルをインポート  %>
@@ -36,12 +37,16 @@
 	<nav class="navbar fixed-bottom copan-navbar-under copan-theme-color">
 		<div class="copan-navbar-item">
 			<% 
-				if (url_for('current') eq '/add') {
+				# 戻るボタンを表示する
+				if ((url_for('current') eq '/add') || (url_for('current') eq '/sharedUserList')) {
 			%>
 			<form class="form-inline align-middle " action="/expensesList">
 				<button class="btn" type="submit"><i id="undo-icon" class="fas fa-undo"></i></button>
 			</form>
-			% } elsif (url_for('current') eq '/expensesList') {
+			<% 
+				# 追加ボタンを表示する
+				} elsif (url_for('current') eq '/expensesList') {
+			%>
 			<form class="form-inline align-middle" action="/add">
 				<button class="btn" type="submit"><i id="add-icon" class="fas fa-plus"></i></button>
 			</form>

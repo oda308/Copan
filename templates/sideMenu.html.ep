@@ -7,14 +7,9 @@
 			<div class="user-name"><%= stash('user_name') %></div>
 		</div>
 		<ul class="list_load">
-			<li class="list_item border-bottom"><a href="#">グループ</a></li>
+			<li class="list_item border-bottom"><a href="/sharedUserList">家計簿の共有</a></li>
 			<li class="list_item border-bottom"><a href="#">支払割合</a></li>
-			<li class="list_item border-bottom"><a href="#">List Item 03</a></li>
-			<li class="list_item border-bottom"><a href="#">List Item 04</a></li>
-			<li class="list_item border-bottom"><a href="#">List Item 05</a></li>
-			<li class="list_item border-bottom"><a href="#">List Item 06</a></li>
-			<li class="list_item border-bottom"><a href="#">List Item 07</a></li>
-			<li class="list_item border-bottom"><a href="#">List Item 08</a></li>
+			<li class="list_item border-bottom"><a href="/logout">ログアウト</a></li>
 		</ul>
 	</div>
 </div>
