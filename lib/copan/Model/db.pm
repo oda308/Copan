@@ -46,7 +46,7 @@ sub updateReceiptList {
 	$sql .= qq{\"$input_data_ref->{'category'}\", };
 	$sql .= qq{\"$input_data_ref->{'item'}\", };
 	$sql .= qq{\"$input_data_ref->{'price'}\", };
-	$sql .= qq{$user_id };
+	$sql .= qq{$user_id, };
 	$sql .= qq{$group_id };
 	$sql .= qq{) };
 	
@@ -75,11 +75,15 @@ sub deleteReceiptList {
 }
 
 ## -------------------------------------------------------------------
-## 指定した月の領収書を取得する
+## [共有]指定した月の領収書を取得する
 ## -------------------------------------------------------------------
 sub fetchCurrentMonthReceiptList {
 	
-	my ($dbh, $self, $target_year, $target_month) = @_;
+	my ($dbh, $self, $target_year, $target_month, $group_id) = @_;
+	
+	if (!$target_year || !$target_month || !$group_id) {
+		return;
+	}
 	
 	my $start_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . '01' . ' 00:00:00';
 	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_month, $target_month)) . ' 23:59:59';
@@ -87,6 +91,7 @@ sub fetchCurrentMonthReceiptList {
 	my $sql = qq{SELECT * FROM receipt_list };
 	$sql .= qq{WHERE time_stamp >= \'$start_date\' };
 	$sql .= qq{AND time_stamp <= \'$end_date\' };
+	$sql .= qq{AND group_id = $group_id };
 	
 	&copan::Controller::common::debug($self, $sql);
 	
@@ -107,14 +112,27 @@ sub fetchCurrentMonthReceiptList {
 	return @receipt_array;
 }
 
+
 ## -------------------------------------------------------------------
-## 過去計上した領収書全てを取得する
+## 削除可能な費目の一覧を取得する(今月分かつ自分が計上したもの)
 ## -------------------------------------------------------------------
-sub fetchReceiptList {
+sub fetchEnabledDeleteReceiptList {
 	
-	my ($dbh, $self) = @_;
+	my ($dbh, $self, $target_year, $target_month, $user_id) = @_;
+	
+	if (!$target_year || !$target_month || !$user_id) {
+		return;
+	}
+	
+	my $start_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . '01' . ' 00:00:00';
+	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_month, $target_month)) . ' 23:59:59';
 	
 	my $sql = qq{SELECT * FROM receipt_list };
+	$sql .= qq{WHERE time_stamp >= \'$start_date\' };
+	$sql .= qq{AND time_stamp <= \'$end_date\' };
+	$sql .= qq{AND user_id = $user_id };
+	
+	&copan::Controller::common::debug($self, $sql);
 	
 	my $sth = $dbh->prepare($sql);
 	$sth->execute();

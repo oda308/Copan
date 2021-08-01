@@ -117,6 +117,7 @@ sub expensesList($self) {
 	
 	my $user_id = 0;
 	my $user_name = 0;
+	my $group_id = 0;
 	
 	my $DB_CONF  = $self->app->config->{DB};
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
@@ -128,9 +129,16 @@ sub expensesList($self) {
 	}
 	else
 	{
-		($user_id, $user_name, undef) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
+		($user_id, $user_name, $group_id) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
 		$self->stash(user_name => $user_name);
 	}
+	
+	# 表示する年月を取得
+	my ($target_year, $target_month) = &getTargetYearAndMonth($self->param('target_year'), $self->param('target_month'));
+	
+	# 指定した年月の費目を取得(共有に計上されたものを取得する)
+	my @receipt_array = &copan::Model::db::fetchCurrentMonthReceiptList($dbh, $self, $target_year, $target_month, $group_id);
+	$self->stash(receipt_array => \@receipt_array);
 	
 	# パラメーターの設定
 	setStash($self, $dbh);
@@ -157,6 +165,13 @@ sub add($self) {
 		($user_id, $user_name, undef) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
 		$self->stash(user_name => $user_name);
 	}
+	
+	# 表示する年月を取得
+	my ($target_year, $target_month) = &getTargetYearAndMonth($self->param('target_year'), $self->param('target_month'));
+	
+	# 削除可能な費目一覧を取得(自分が計上したものかつ今月の費目)
+	my @receipt_array = &copan::Model::db::fetchEnabledDeleteReceiptList($dbh, $self, $target_year, $target_month, $user_id);
+	$self->stash(receipt_array => \@receipt_array);
 	
 	# パラメーターの設定
 	setStash($self, $dbh);
@@ -316,21 +331,14 @@ sub setStash {
 	
 	my ($self, $dbh) = @_;
 	
-	# 現在時刻の取得
-	my $current_date = DateTime->now();
-	
 	# 現在のルーターを格納
 	my $url = $self->url_for('current');
 	
-	# 現在の年月を指定
-	my $target_year = $self->param('target_year');
-	my $target_month = $self->param('target_month');
+	# 現在時刻の取得
+	my $current_date = DateTime->now();
 	
-	# 表示する年月をGETで受け取っていたら指定
-	if (!$target_year and !$target_month) {
-		$target_year = $current_date->year;
-		$target_month = $current_date->month;
-	}
+	# 表示する年月を取得
+	my ($target_year, $target_month) = &getTargetYearAndMonth($self->param('target_year'), $self->param('target_month'));
 	
 	# 表示する年月を格納
 	$self->stash(target_year => $target_year);
@@ -338,9 +346,6 @@ sub setStash {
 	
 	my %date_previous_month = &copan::Controller::date::getPreviousMonth($target_year, $target_month);
 	my %date_next_month = &copan::Controller::date::getNextMonth($target_year, $target_month);
-	
-	# 品目一覧を取得
-	my @receipt_array = &copan::Model::db::fetchCurrentMonthReceiptList($dbh, $self, $target_year, $target_month);
 	
 	# 表示する年月の出費をカテゴリ別に取得
 	my %expenses_hash = &copan::Model::db::fetchAllExpenses($dbh, $self, $target_year, $target_month);
@@ -354,10 +359,24 @@ sub setStash {
 		previous_month => $date_previous_month{'month'},
 		next_year => $date_next_month{'year'}, 			# 表示する年月の一月後を格納
 		next_month => $date_next_month{'month'},
-		receipt_array => \@receipt_array,
 		expenses_hashref => \%expenses_hash,
 	);
+}
+
+sub getTargetYearAndMonth {
 	
+	my ($target_year, $target_month) = @_;
+	
+	# 現在時刻の取得
+	my $current_date = DateTime->now();
+	
+	# 表示する年月をパラメータで受け取っていなかったら現在の年月を取得する
+	if (!$target_year and !$target_month) {
+		$target_year = $current_date->year;
+		$target_month = $current_date->month;
+	}
+	
+	return ($target_year, $target_month);
 }
 
 
