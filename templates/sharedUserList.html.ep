@@ -1,0 +1,19 @@
+% layout 'common', title => 'Index';
+
+<h4 class="page-title">家計簿の共有</h4>
+
+<div class="page-discription border-bottom">
+	共有したユーザー同士で計上した費目を確認することができます
+</div>
+
+<% if (@{ $group_user_name_arrayref }) { %>
+	<% foreach my $group_user_name (@{ $group_user_name_arrayref }) { %>
+	<div class="group-user-name border-bottom">
+		<%= $group_user_name %>
+	</div>
+	<% } %>
+<% } else { %>
+	<div class="group-user-name text-center mt-3 mb-3">
+		家計簿を共有していません
+	</div>
+<% } %>
