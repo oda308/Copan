@@ -167,12 +167,12 @@ sub add($self) {
 		$self->stash(user_name => $user_name);
 	}
 	
-	# 表示する年月を取得
-	my ($target_year, $target_month) = &getTargetYearAndMonth($self->param('target_year'), $self->param('target_month'));
-	
 	# 払う人を決めるのユーザー名一覧を取得する
 	my @group_user_name_array = &copan::Model::db::fetchGroupUserName($dbh, $self, $user_id, $group_id);
 	$self->stash(payer_arrayref => \@group_user_name_array);
+	
+	# 表示する年月を取得
+	my ($target_year, $target_month) = &getTargetYearAndMonth($self->param('target_year'), $self->param('target_month'));
 	
 	# 削除可能な費目一覧を取得(自分が計上したものかつ今月の費目)
 	my @receipt_array = &copan::Model::db::fetchEnabledDeleteReceiptList($dbh, $self, $target_year, $target_month, $user_id);
@@ -252,12 +252,21 @@ sub update($self) {
 
 sub delete($self) {
 	
+	my $DB_CONF  = $self->app->config->{DB};
+	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
+	
+	my $user_id = 0;
+	my $user_name = 0;
+	my $group_id = 0;
+	
 	if (!$self->session('id')) {
 		$self->redirect_to('/?sessionExpired=1');
 	}
-	
-	my $DB_CONF  = $self->app->config->{DB};
-	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
+	else
+	{
+		($user_id, $user_name, $group_id) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
+		$self->stash(user_name => $user_name);
+	}
 	
 	# 削除予定のidを取得
 	my $delte_id = $self->param('id');
@@ -275,6 +284,17 @@ sub delete($self) {
 	} else {
 		$self->stash(error_message => "選択された削除項目が存在しません");
 	}
+	
+	# 払う人を決めるのユーザー名一覧を取得する
+	my @group_user_name_array = &copan::Model::db::fetchGroupUserName($dbh, $self, $user_id, $group_id);
+	$self->stash(payer_arrayref => \@group_user_name_array);
+	
+	# 表示する年月を取得
+	my ($target_year, $target_month) = &getTargetYearAndMonth($self->param('target_year'), $self->param('target_month'));
+	
+	# 削除可能な費目一覧を取得(自分が計上したものかつ今月の費目)
+	my @receipt_array = &copan::Model::db::fetchEnabledDeleteReceiptList($dbh, $self, $target_year, $target_month, $user_id);
+	$self->stash(receipt_array => \@receipt_array);
 	
 	# パラメーターの設定
 	setStash($self, $dbh);
