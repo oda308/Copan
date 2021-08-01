@@ -106,6 +106,18 @@
 	</section>
 	
 	<section class="add-section">
+		<div class="payer-box">
+			<div class="payer-title">払う人を決める</div>
+			<select class="form-select" name="payer" aria-label="Default select example">
+				<option value="" selected>みんなで払う</option>
+				<% foreach my $payer (@{stash('payer_arrayref')}) { %>
+				<option value="<%= $payer %>"><%= $payer %></option>
+				<% } %>
+			</select>
+		</div>
+	</section>
+	
+	<section class="add-section">
 		<div class="d-grid gap-2">
 			<button class="btn btn-primary" type="submit">登　録</button>
 		</div>

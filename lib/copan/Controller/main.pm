@@ -156,18 +156,23 @@ sub add($self) {
 	
 	my $user_id = 0;
 	my $user_name = 0;
+	my $group_id = 0;
 	
 	if (!$self->session('id')) {
 		$self->redirect_to('/?sessionExpired=1');
 	}
 	else
 	{
-		($user_id, $user_name, undef) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
+		($user_id, $user_name, $group_id) = &copan::Model::db::fetchUserData($dbh, $self, $self->session('id'));
 		$self->stash(user_name => $user_name);
 	}
 	
 	# 表示する年月を取得
 	my ($target_year, $target_month) = &getTargetYearAndMonth($self->param('target_year'), $self->param('target_month'));
+	
+	# 払う人を決めるのユーザー名一覧を取得する
+	my @group_user_name_array = &copan::Model::db::fetchGroupUserName($dbh, $self, $user_id, $group_id);
+	$self->stash(payer_arrayref => \@group_user_name_array);
 	
 	# 削除可能な費目一覧を取得(自分が計上したものかつ今月の費目)
 	my @receipt_array = &copan::Model::db::fetchEnabledDeleteReceiptList($dbh, $self, $target_year, $target_month, $user_id);
@@ -223,8 +228,14 @@ sub update($self) {
 		$self->flash(error_message => \@error_messages);
 		$self->redirect_to('add');
 	} else {
+		my $payer_id = 0; 
+		# 払う人を指定していた場合はそのuser_idを取得する。みんなで払う、無効値の場合はみんなで払うとして処理される
+		if ($self->param('payer')) {
+			$payer_id = &copan::Model::db::fetchPayerId($dbh, $self, $group_id, $self->param('payer'));
+		}
+		
 		# 入力内容を計上
-		my $result = &copan::Model::db::updateReceiptList($dbh, $self, \%input_data, $user_id, $group_id);
+		my $result = &copan::Model::db::updateReceiptList($dbh, $self, \%input_data, $user_id, $group_id, $payer_id);
 		
 		my $error_message = "";
 		my $success_message = "";
@@ -294,7 +305,7 @@ sub sharedUserList($self) {
 	}
 	
 	# 自分と同じグループIDのユーザー名を配列で取得する(自分以外)
-	my @group_user_name_array = &copan::Model::db::fetchGroupUserName($dbh, $self, $user_id, $group_id);
+	my @group_user_name_array = &copan::Model::db::fetchGroupUserNameExceptMyself($dbh, $self, $user_id, $group_id);
 	$self->stash(group_user_name_arrayref => \@group_user_name_array);
 	
 	# パラメーターの設定

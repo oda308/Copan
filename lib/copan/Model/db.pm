@@ -32,7 +32,7 @@ sub connectDB {
 ## -------------------------------------------------------------------
 sub updateReceiptList {
 	
-	my ($dbh, $self, $input_data_ref, $user_id, $group_id) = @_;
+	my ($dbh, $self, $input_data_ref, $user_id, $group_id, $payer_id) = @_;
 	
 	my $sql = qq{INSERT INTO receipt_list ( };
 	$sql .= qq{purchase_date, };
@@ -40,14 +40,16 @@ sub updateReceiptList {
 	$sql .= qq{item, };
 	$sql .= qq{price, };
 	$sql .= qq{user_id, };
-	$sql .= qq{group_id };
+	$sql .= qq{group_id, };
+	$sql .= qq{payer_id };
 	$sql .= qq{) VALUES ( };
 	$sql .= qq{\"$input_data_ref->{'purchase_date'}\", };
 	$sql .= qq{\"$input_data_ref->{'category'}\", };
 	$sql .= qq{\"$input_data_ref->{'item'}\", };
 	$sql .= qq{\"$input_data_ref->{'price'}\", };
 	$sql .= qq{$user_id, };
-	$sql .= qq{$group_id };
+	$sql .= qq{$group_id, };
+	$sql .= qq{$payer_id };
 	$sql .= qq{) };
 	
 	&copan::Controller::common::debug($self, $sql);
@@ -540,7 +542,7 @@ sub fetchUserData {
 ## -------------------------------------------------------------------
 ## 同じグループに所属する自分以外のユーザーネームを取得する
 ## -------------------------------------------------------------------
-sub fetchGroupUserName {
+sub fetchGroupUserNameExceptMyself {
 	
 	my ($dbh, $self, $user_id, $group_id) = @_;
 	
@@ -570,5 +572,102 @@ sub fetchGroupUserName {
 	$sth->finish;
 	
 	return @group_user_name_array;
+}
+
+## -------------------------------------------------------------------
+## 同じグループに所属するすべてのユーザーネームを取得する(自分は除く)
+## -------------------------------------------------------------------
+sub fetchGroupUserNameExceptMyself {
+	
+	my ($dbh, $self, $user_id, $group_id) = @_;
+	
+	if (!$user_id) {
+		return;
+	}
+	
+	my @group_user_name_array = ();
+	
+	my $sql = qq{SELECT user_name };
+	$sql .= qq{FROM user };
+	$sql .= qq{WHERE group_id = $group_id };
+	$sql .= qq{AND user_id != $user_id };
+	$sql .= qq{ORDER BY user_id };
+	
+	&copan::Controller::common::debug($self, $sql);
+	
+	my $sth = $dbh->prepare($sql);
+	$sth->execute();
+	
+	&copan::Controller::common::debug($self, $sth->rows);
+	
+	while (my ($user_name) = $sth->fetchrow_array) {
+		push(@group_user_name_array, $user_name);
+	}
+	
+	$sth->finish;
+	
+	return @group_user_name_array;
+}
+
+## -------------------------------------------------------------------
+## 同じグループに所属するすべてのユーザーネームを取得する
+## -------------------------------------------------------------------
+sub fetchGroupUserName {
+	
+	my ($dbh, $self, $user_id, $group_id) = @_;
+	
+	if (!$user_id) {
+		return;
+	}
+	
+	my @group_user_name_array = ();
+	
+	my $sql = qq{SELECT user_name };
+	$sql .= qq{FROM user };
+	$sql .= qq{WHERE group_id = $group_id };
+	$sql .= qq{ORDER BY user_id };
+	
+	&copan::Controller::common::debug($self, $sql);
+	
+	my $sth = $dbh->prepare($sql);
+	$sth->execute();
+	
+	&copan::Controller::common::debug($self, $sth->rows);
+	
+	while (my ($user_name) = $sth->fetchrow_array) {
+		push(@group_user_name_array, $user_name);
+	}
+	
+	$sth->finish;
+	
+	return @group_user_name_array;
+}
+
+## -------------------------------------------------------------------
+## 払う人のIDを取得する
+## -------------------------------------------------------------------
+sub fetchPayerId {
+	
+	my ($dbh, $self, $group_id, $payer_name) = @_;
+	
+	if (!$group_id || !$payer_name) {
+		return;
+	}
+	
+	my $sql = qq{SELECT user_id };
+	$sql .= qq{FROM user };
+	$sql .= qq{WHERE group_id = $group_id };
+	$sql .= qq{AND user_name = "$payer_name" };
+	
+	&copan::Controller::common::debug($self, $sql);
+	
+	my $sth = $dbh->prepare($sql);
+	$sth->execute();
+	
+	my ($payer_id) = $sth->fetchrow_array;
+	
+	$sth->finish;
+	
+	return $payer_id;
 }
 1;
