@@ -12,10 +12,6 @@ sub login($self) {
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
 	
 	&copan::Controller::common::debug($self, "login()");
-	
-	# パラメーターの設定
-	#setStash($self, $dbh);
-
 	&copan::Controller::common::debug($self, "error_message" . $self->param('error_message'));
 	&copan::Controller::common::debug($self, "error_message" . $self->param('sessionExpired'));
 
@@ -133,6 +129,8 @@ sub expensesList($self) {
 		$self->stash(user_name => $user_name);
 	}
 	
+	&copan::Controller::common::debug($self, "current group id : " . $group_id);
+	
 	# 表示する年月を取得
 	my ($target_year, $target_month) = &getTargetYearAndMonth($self->param('target_year'), $self->param('target_month'));
 	
@@ -141,7 +139,7 @@ sub expensesList($self) {
 	$self->stash(receipt_array => \@receipt_array);
 	
 	# パラメーターの設定
-	setStash($self, $dbh);
+	setStash($self, $dbh, $group_id);
 
 	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
 	$self->render('expensesList');
@@ -179,7 +177,7 @@ sub add($self) {
 	$self->stash(receipt_array => \@receipt_array);
 	
 	# パラメーターの設定
-	setStash($self, $dbh);
+	setStash($self, $dbh, $group_id);
 	
 	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
 	$self->render('add');
@@ -222,7 +220,7 @@ sub update($self) {
 	}
 	
 	# パラメーターの設定
-	setStash($self, $dbh);
+	setStash($self, $dbh, $group_id);
 	
 	if ($error_messages_length) {
 		$self->flash(error_message => \@error_messages);
@@ -297,7 +295,7 @@ sub delete($self) {
 	$self->stash(receipt_array => \@receipt_array);
 	
 	# パラメーターの設定
-	setStash($self, $dbh);
+	setStash($self, $dbh, $group_id);
 	
 	$self->render('/add');
 	
@@ -329,7 +327,7 @@ sub sharedUserList($self) {
 	$self->stash(group_user_name_arrayref => \@group_user_name_array);
 	
 	# パラメーターの設定
-	setStash($self, $dbh);
+	setStash($self, $dbh, $group_id);
 
 	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
 	$self->render('sharedUserList');
@@ -360,7 +358,7 @@ sub getErrorMessage {
 
 sub setStash {
 	
-	my ($self, $dbh) = @_;
+	my ($self, $dbh, $group_id) = @_;
 	
 	# 現在のルーターを格納
 	my $url = $self->url_for('current');
@@ -379,7 +377,7 @@ sub setStash {
 	my %date_next_month = &copan::Controller::date::getNextMonth($target_year, $target_month);
 	
 	# 表示する年月の出費をカテゴリ別に取得
-	my %expenses_hash = &copan::Model::db::fetchAllExpenses($dbh, $self, $target_year, $target_month);
+	my %expenses_hash = &copan::Model::db::fetchAllExpenses($dbh, $self, $target_year, $target_month, $group_id);
 	
 	$self->stash(
 		current => $url,
