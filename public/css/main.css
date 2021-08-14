@@ -36,13 +36,16 @@
 }
 .copan-navbar-under {
 	height: 50px;
+	padding-top: 0;
+	padding-bottom: 0;
+}
 }
 
 .copan-navbar-under button {
-	padding: 0;
+	padding: 14px;
 }
 
-.copan-navbar-under #add-icon {
+.copan-navbar-under .fas {
 	font-size: 1.2rem;
 }
 
@@ -214,9 +217,8 @@
 	padding-left: 10px;
 }
 
-.purchase-input {
-	width: 100%;
-	height: 40px;
+.purchase-date input {
+	font-size: 1.2rem;
 }
 
 .purchase-icon {
@@ -229,6 +231,7 @@
 
 .purchase-input {
 	width: 90%;
+	height: 40px;
 }
 
 .purchase-input input {
@@ -280,5 +283,12 @@
 	padding: 5px;
 	text-align: center;
 	padding: 10px 10px;
+}
+
+.add-section input,
+.add-section select {
+	border: none;
+	border-bottom: 1px solid #ced4da;
+	border-radius: 0;
 }
 

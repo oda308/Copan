@@ -21,7 +21,7 @@
 			<a href="/expensesList?target_year=<%= stash('previous_year') %>&target_month=<%= stash('previous_month') %>"><i class="fas fa-caret-left"></i></a>
 		</div>
 		<div class="current-month">
-			<%= stash('target_year') %> 年 <%= stash('target_month') %> 月
+			<%= <%= stash('target_month') %> 月
 		</div>
 		<div class="next-month">
 			<a href="/expensesList?target_year=<%= stash('next_year') %>&target_month=<%= stash('next_month') %>"><i class="fas fa-caret-right"></i></a>
