@@ -344,16 +344,16 @@ sub delete($self) {
 		my $result = &copan::Model::db::deleteReceiptList($delte_id, $dbh);
 		
 		if (!$result) {
-			$self->stash(error_message => "削除に失敗しました");
+			$self->flash(error_message => "削除に失敗しました");
 		} else {
-			$self->stash(success_message => "削除が完了しました");
+			$self->flash(success_message => "削除が完了しました");
 		}
 		
 	} else {
-		$self->stash(error_message => "選択された削除項目が存在しません");
+		$self->flash(error_message => "選択された削除項目が存在しません");
 	}
 	
-	# 払う人を決めるのユーザー名一覧を取得する
+	# 払う人を決めるユーザー名一覧を取得する
 	my @group_user_name_array = &copan::Model::db::fetchGroupUserName($dbh, $self, $my_user_id, $group_id);
 	$self->stash(payer_arrayref => \@group_user_name_array);
 	
@@ -367,7 +367,7 @@ sub delete($self) {
 	# パラメーターの設定
 	setStash($self, $dbh, $group_id);
 	
-	$self->render('/add');
+	$self->redirect_to('/add');
 	
 	$dbh->disconnect; #DB切断
 }
