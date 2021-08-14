@@ -29,7 +29,7 @@
 </div>
 
 <div class="liquidation-box">
-	<div class="liquidation-title">今月の立替清算</div>
+	<div class="liquidation-title">立替金の清算</div>
 	
 	<% if (stash('my_burden') < 0) { %>
 	<!-- 受け取りの場合の表示 -->
@@ -77,20 +77,26 @@
 				<div class="expense-item">
 					<%= $category_type %>
 				</div>
-				<div class="expense-item-value">&yen 
-					<% if ($category_type eq '食費') { %>
-						<%= $expenses_hashref->{'food'} %>
-					<% } elsif ($category_type eq '日用品') { %>
-						<%= $expenses_hashref->{'daily_necessities'} %>
-					<% } elsif ($category_type eq '電気代') { %>
-						<%= $expenses_hashref->{'electricity'} %>
-					<% } elsif ($category_type eq 'ガス代') { %>
-						<%= $expenses_hashref->{'gas'} %>
-					<% } elsif ($category_type eq '水道代') { %>
-						<%= $expenses_hashref->{'water_supply'} %>
-					<% } elsif ($category_type eq 'その他') { %>
-						<%= $expenses_hashref->{'others'} %>
-					<% } %>
+				<% my $expenses = 0; %>
+				<% if ($category_type eq '食費') { %>
+					<% $expenses = $expenses_hashref->{'food'}; %>
+				<% } elsif ($category_type eq '日用品') { %>
+					<% $expenses = $expenses_hashref->{'daily_necessities'}; %>
+				<% } elsif ($category_type eq '電気代') { %>
+					<% $expenses = $expenses_hashref->{'electricity'}; %>
+				<% } elsif ($category_type eq 'ガス代') { %>
+					<% $expenses = $expenses_hashref->{'gas'}; %>
+				<% } elsif ($category_type eq '水道代') { %>
+					<% $expenses = $expenses_hashref->{'water_supply'}; %>
+				<% } elsif ($category_type eq 'その他') { %>
+					<% $expenses = $expenses_hashref->{'others'}; %>
+				<% } %>
+				<% my $none_value = ''; %>
+				<% if ($expenses == 0) { %>
+				<% $none_value = 'none-value'; %>
+				<% } %>
+				<div class="expense-item-value <%= $none_value %>">
+					&yen <%= $expenses %>
 				</div>
 			</div>
 			<div class="expense-sub-item-list">
