@@ -46,81 +46,70 @@
 <% my $expenses_hashref = stash('expenses_hashref'); %>
 	<ul class="category-expenses">
 		<li class="expense-item-box">
-			<div class="expense-item">支出</div>
-			<div class="expense-item-icon"></div>
-			<div class="expense-item-value">&yen <%= $expenses_hashref->{'total_expenses'} %></div>
-		</li>
-		<li class="expense-item-box">
-			<div class="expense-item-icon">
-				<i class="fas fa-utensils"></i>
+			<div class="expense-item-category">
+				<div class="expense-item">支出</div>
+				<div class="expense-item-icon"></div>
+				<div class="expense-item-value">&yen <%= $expenses_hashref->{'total_expenses'} %></div>
 			</div>
-			<div class="expense-item">食費</div>
-			<div class="expense-item-value">&yen <%= $expenses_hashref->{'food'} %></div>
 		</li>
-		<li class="expense-item-box">
-			<div class="expense-item-icon">
-				<i class="fas fa-tshirt"></i>
+		<% my @category_type_array = ('食費', '日用品', '電気代', 'ガス代', '水道代', 'その他'); %>
+		<% foreach my $category_type (@category_type_array) { %>
+		<li class="expense-item-box button-open-sub-item">
+			<div class="expense-item-category">
+				<div class="button-open-sub-item-icon-box">
+					<i class=" fas fa-chevron-down button-open-sub-item-icon"></i>
+				</div>
+				<div class="expense-item-icon">
+					<% if ($category_type eq '食費') { %>
+					<i class="fas fa-utensils"></i>
+					<% } elsif ($category_type eq '日用品') { %>
+					<i class="fas fa-tshirt"></i>
+					<% } elsif ($category_type eq '電気代') { %>
+					<i class="fas fa-bolt"></i>
+					<% } elsif ($category_type eq 'ガス代') { %>
+					<i class="fas fa-gas-pump"></i>
+					<% } elsif ($category_type eq '水道代') { %>
+					<i class="fas fa-faucet"></i>
+					<% } elsif ($category_type eq 'その他') { %>
+					<i class="fas fa-ellipsis-h"></i>
+					<% } %>
+				</div>
+				<div class="expense-item">
+					<%= $category_type %>
+				</div>
+				<div class="expense-item-value">&yen 
+					<% if ($category_type eq '食費') { %>
+						<%= $expenses_hashref->{'food'} %>
+					<% } elsif ($category_type eq '日用品') { %>
+						<%= $expenses_hashref->{'daily_necessities'} %>
+					<% } elsif ($category_type eq '電気代') { %>
+						<%= $expenses_hashref->{'electricity'} %>
+					<% } elsif ($category_type eq 'ガス代') { %>
+						<%= $expenses_hashref->{'gas'} %>
+					<% } elsif ($category_type eq '水道代') { %>
+						<%= $expenses_hashref->{'water_supply'} %>
+					<% } elsif ($category_type eq 'その他') { %>
+						<%= $expenses_hashref->{'others'} %>
+					<% } %>
+				</div>
 			</div>
-			<div class="expense-item">日用品</div>
-			<div class="expense-item-value">&yen <%= $expenses_hashref->{'daily_necessities'} %></div>
-		</li>
-		<li class="expense-item-box">
-			<div class="expense-item-icon">
-				<i class="fas fa-bolt"></i>
+			<div class="expense-sub-item-list">
+				<ul>
+					<% my $receipt_array_ref = stash('receipt_array'); %>
+					<% foreach my $receipt_hash(@{$receipt_array_ref}) { %>
+					<% if ($receipt_hash->{'category'} eq $category_type) { %>
+					<li>
+						<div class="expense-sub-item-date">
+							<%= $receipt_hash->{'purchase_date'} %>
+						</div>
+						<div class="expense-sub-item"><%= $receipt_hash->{'item'} %></div>
+						<div class="expense-sub-item-value">&yen <%= $receipt_hash->{'price'} %></div>
+					</li>
+					<% } %>
+					<% } %>
+				</ul>
 			</div>
-			<div class="expense-item">電気代</div>
-			<div class="expense-item-value">&yen <%= $expenses_hashref->{'electricity'} %></div>
 		</li>
-		<li class="expense-item-box">
-			<div class="expense-item-icon">
-				<i class="fas fa-gas-pump"></i>
-			</div>
-			<div class="expense-item">ガス代</div>
-			<div class="expense-item-value">&yen <%= $expenses_hashref->{'gas'} %></div>
-		</li>
-		<li class="expense-item-box">
-			<div class="expense-item-icon">
-				<i class="fas fa-faucet"></i>
-			</div>
-			<div class="expense-item">水道代</div>
-			<div class="expense-item-value">&yen <%= $expenses_hashref->{'water_supply'} %></div>
-		</li>
-		<li class="expense-item-box">
-			<div class="expense-item-icon">
-				<i class="fas fa-ellipsis-h"></i>
-			</div>
-			<div class="expense-item">その他</div>
-			<div class="expense-item-value">&yen <%= $expenses_hashref->{'others'} %></div>
-		</li>
+		<% } %>
 	</ul>
 
-
-<div class="item-table">
-	<table class="table">
-		<thead>
-			<th class="purchase-day" scope="col"><i class="far fa-clock"></i></th>
-			<th class="category" scope="col"><i class="fas fa-layer-group"></i></th>
-			<th class="price" scope="col"><i class="fas fa-cash-register"></i></th>
-			<th class="item" scope="col"><i class="far fa-list-alt"></i></th>
-		</thead>
-		<tbody>
-			<% my $receipt_array_ref = stash('receipt_array'); %>
-			<% foreach my $receipt_hash(@{$receipt_array_ref}) { %>
-			<tr>
-				<td class="purchase-day align-middle">
-					<%= $receipt_hash->{'purchase_date'}; %>
-				</td>
-				<td class="category align-middle">
-					<%= $receipt_hash->{'category'}; %>
-				</td>
-				<td class="price align-middle">
-					&yen<%= $receipt_hash->{'price'}; %>
-				</td>
-				<td class="item align-middle">
-					<%= $receipt_hash->{'item'}; %>
-				</td>
-			</tr>
-			<% } %>
-		</tbody>
-	</table>
-</div>

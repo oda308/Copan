@@ -65,6 +65,9 @@
 <%= javascript  '/js/jquery-3.6.0.min.js' %>
 <%= javascript  '/js/bootstrap.bundle.min.js' %>
 <% if (url_for('current') ne '/') { # ログインページを以外を表示する場合、sidemenuを表示するファイルをインポート %>
-	<%= javascript '/js/side_menu.js' %>
+	<%= javascript '/js/side_menu.js?v=1' %>
+<% }%>
+<% if (url_for('current') eq '/expensesList') { # 領収書一覧を表示する場合のjsファイル %>
+	<%= javascript '/js/expenses_list.js?v=1' %>
 <% }%>
 </html>

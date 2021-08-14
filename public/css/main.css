@@ -78,28 +78,62 @@
 	padding-left: 0;
 }
 
-.expense-item-box {
+.category-expenses {
+	border-top: solid 1px #dee2e6;
+}
+
+.expense-item-category {
 	display: flex;
 	align-items: baseline;
 	border-bottom: solid 1px #dee2e6;
 	padding: 15px 10px;
 }
 
-.expense-item-box:first-child {
-	padding: 20px 10px;
+.expense-sub-item-list {
+	display: none;
+}
+
+.expense-sub-item-list ul {
+	padding-left: 0;
+}
+
+.expense-sub-item-list ul li {
+	display: flex;
+	align-items: baseline;
+	border-bottom: solid 1px #dee2e6;
+	padding: 15px 10px;
+	font-size: 0.8rem;
 }
 
 .expense-item:first-child {
 	font-weight: bold;
 }
 
-.expense-item {
+.button-open-sub-item .button-open-sub-item-icon-box {
+	width: 5%;
+}
+
+.button-open-sub-item .expense-item-icon {
+	width: 10%;
+}
+
+.button-open-sub-item .expense-item {
+	width: 58%;
+}
+
+.button-open-sub-item .expense-item-value {
+	width: 27%;
+}
+
+.expense-item,
+.expense-sub-item {
 	width: 60%;
 	flex-shrink: 0;
 	box-sizing: border-box;
 }
 
-.expense-item-icon {
+.expense-item-icon,
+.expense-sub-item-date {
 	width: 10%;
 	text-align: center;
 	margin-right: 10px;
@@ -107,12 +141,17 @@
 	box-sizing: border-box;
 }
 
-.expense-item-value {
+.expense-item-value,
+.expense-sub-item-value {
 	width: 30%;
 	text-align: right;
 	flex-shrink: 0;
 	box-sizing: border-box;
 	padding-right: 15px;
+}
+
+.button-open-sub-item-icon {
+	margin-right: 10px;
 }
 
 /*** item-table ***/
@@ -211,8 +250,7 @@
 }
 
 .liquidation-box {
-	margin-top: 20px;
-	margin-bottom: 20px;
+	margin-bottom: 30px;
 }
 
 .liquidation-title {

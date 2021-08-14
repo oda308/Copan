@@ -1,6 +1,5 @@
-$(document).ready(function(){
-    // Requires jQuery
-
+$(function(){
+	
 	$(document).on('click','.overlay',function(e){
 		console.log("overlay clicked");
 		

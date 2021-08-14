@@ -159,6 +159,8 @@ sub expensesList($self) {
 		&copan::Controller::common::debug($self, 'group_id : ' . $receipt->{'group_id'});
 		&copan::Controller::common::debug($self, 'payer_id : ' . $receipt->{'payer_id'});
 		
+		my $adjusted_price = $receipt->{'price'}; # 端数があれば直後の処理で加える
+		
 		# みんなが払うを指定している場合は、全員に配分
 		# 1.支払いを行った人にマイナス計上
 		# 2.支払いを行わなかった人に計上
@@ -169,10 +171,10 @@ sub expensesList($self) {
 			if (($receipt->{'price'} % $group_member_count) > 0) {
 				
 				my $fraction += $group_member_count - ($receipt->{'price'} % $group_member_count);
-				$receipt->{'price'} += $fraction;
+				$adjusted_price += $fraction;
 			}
 			
-			my $each_burden = int($receipt->{'price'} / $group_member_count); # グループに所属する人数で割った金額を算出
+			my $each_burden = int($adjusted_price / $group_member_count); # グループに所属する人数で割った金額を算出
 			
 			&copan::Controller::common::debug($self, 'each_burden : ' . $each_burden);
 			
@@ -180,7 +182,7 @@ sub expensesList($self) {
 				# 支払いを行った本人の場合は、計上した金額 - (一人分の負担金)の分マイナスする
 				if ($user_id == $receipt->{'user_id'}) {
 					
-					$group_member_hashref->{$user_id}->{'burden'} -= $receipt->{'price'} - $each_burden;
+					$group_member_hashref->{$user_id}->{'burden'} -= $adjusted_price - $each_burden;
 					
 				# それ以外は一人分の負担金を加算する
 				} else {
@@ -196,8 +198,8 @@ sub expensesList($self) {
 		# 計上した人と、支払いを行う人が違う場合は、支払いを指定された人が全額負担し、立て替えた人に全額返す
 		} elsif ($receipt->{'payer_id'} != $receipt->{'user_id'}) {
 			
-			$group_member_hashref->{$receipt->{'user_id'}}->{'burden'} -= $receipt->{'price'}; # 立て替えた人から全額差し引く
-			$group_member_hashref->{$receipt->{'payer_id'}}->{'burden'} += $receipt->{'price'}; # 支払いを指定された人が全額負担
+			$group_member_hashref->{$receipt->{'user_id'}}->{'burden'} -= $adjusted_price; # 立て替えた人から全額差し引く
+			$group_member_hashref->{$receipt->{'payer_id'}}->{'burden'} += $adjusted_price; # 支払いを指定された人が全額負担
 		}
 	}
 	
