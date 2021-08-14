@@ -5,12 +5,12 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<%= stylesheet '/css/bootstrap.min.css' %>
-	<%= stylesheet '/css/main.css' %>
-	<%= stylesheet '/css/shared_user_list.css' %>
+	<%= stylesheet '/css/main.css?v=1' %>
+	<%= stylesheet '/css/shared_user_list.css?v=1' %>
 	<% if (url_for('current') eq '/') { # ログインページを表示する場合、login.cssをインポート %>
-	<%= stylesheet '/css/login.css' %>
+	<%= stylesheet '/css/login.css?v=1' %>
 	<% } else { # それ以外を表示する場合、再度メニュー表示用ファイルをインポート  %>
-	<%= stylesheet '/css/side_menu.css' %>
+	<%= stylesheet '/css/side_menu.css?v=1' %>
 	<% }%>
 	<script src="https://kit.fontawesome.com/a3467d4ec0.js" crossorigin="anonymous"></script>
 	<title>Copan</title>
