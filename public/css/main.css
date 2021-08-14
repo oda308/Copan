@@ -31,6 +31,21 @@
 	padding-right: 20px;
 }
 
+.copan-navbar {
+	height: 60px;
+}
+.copan-navbar-under {
+	height: 50px;
+}
+
+.copan-navbar-under button {
+	padding: 0;
+}
+
+.copan-navbar-under #add-icon {
+	font-size: 1.2rem;
+}
+
 .copan-navbar-under button:focus,
 .copan-navbar button:focus {
 	box-shadow: none;
@@ -45,7 +60,7 @@
 }
 
 .notice-box {
-	padding: 10px;
+	margin: 10px 5px;
 }
 
 .date-box {
