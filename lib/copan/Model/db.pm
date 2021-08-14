@@ -262,6 +262,8 @@ sub fetchFood {
 	$sql .= qq{AND category = \'食費\' };
 	$sql .= qq{AND group_id = $group_id };
 	
+	&copan::Controller::common::debug($self, $sql);
+	
 	my $sth = $dbh->prepare($sql);
 	$sth->execute();
 	
@@ -582,41 +584,6 @@ sub fetchGroupUserNameExceptMyself {
 }
 
 ## -------------------------------------------------------------------
-## 同じグループに所属するすべてのユーザーネームを取得する(自分は除く)
-## -------------------------------------------------------------------
-sub fetchGroupUserNameExceptMyself {
-	
-	my ($dbh, $self, $user_id, $group_id) = @_;
-	
-	if (!$user_id) {
-		return;
-	}
-	
-	my @group_user_name_array = ();
-	
-	my $sql = qq{SELECT user_name };
-	$sql .= qq{FROM user };
-	$sql .= qq{WHERE group_id = $group_id };
-	$sql .= qq{AND user_id != $user_id };
-	$sql .= qq{ORDER BY user_id };
-	
-	&copan::Controller::common::debug($self, $sql);
-	
-	my $sth = $dbh->prepare($sql);
-	$sth->execute();
-	
-	&copan::Controller::common::debug($self, $sth->rows);
-	
-	while (my ($user_name) = $sth->fetchrow_array) {
-		push(@group_user_name_array, $user_name);
-	}
-	
-	$sth->finish;
-	
-	return @group_user_name_array;
-}
-
-## -------------------------------------------------------------------
 ## 同じグループに所属するすべてのユーザーネームを取得する
 ## -------------------------------------------------------------------
 sub fetchGroupUserName {
@@ -649,6 +616,45 @@ sub fetchGroupUserName {
 	
 	return @group_user_name_array;
 }
+
+## -------------------------------------------------------------------
+## 同じグループに所属するすべてのユーザーIDとユーザーネームを取得する
+## -------------------------------------------------------------------
+sub fetchGroupUserIdAndName {
+	
+	my ($dbh, $self, $user_id, $group_id) = @_;
+	
+	if (!$user_id) {
+		return;
+	}
+	
+	my $sql = qq{SELECT user_id, user_name };
+	$sql .= qq{FROM user };
+	$sql .= qq{WHERE group_id = $group_id };
+	$sql .= qq{ORDER BY user_id };
+	
+	&copan::Controller::common::debug($self, $sql);
+	
+	my $sth = $dbh->prepare($sql);
+	$sth->execute();
+	
+	&copan::Controller::common::debug($self, $sth->rows);
+	
+	my %group_user_hash = ();
+	
+	while (my $user_hashref = $sth->fetchrow_hashref) {
+		
+		my %tmp_hash = $user_hashref->{'user_name'};
+		$tmp_hash{'user_name'} = $user_hashref->{'user_name'};
+		$group_user_hash{$user_hashref->{'user_id'}} = \%tmp_hash;
+	}
+	
+	$sth->finish;
+	
+	# $group_user_hash->{user_id}->{user_name}で参照できる
+	return \%group_user_hash;
+}
+
 
 ## -------------------------------------------------------------------
 ## 払う人のIDを取得する

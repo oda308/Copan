@@ -209,3 +209,23 @@
 	padding-right: 2px;
 	padding-left: 2px;
 }
+
+.liquidation-box {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.liquidation-title {
+	font-weight: bold;
+	padding: 10px 10px;
+}
+
+.liquidation-receive,
+.liquidation-payment {
+	width: auto;
+	margin: 5px;
+	padding: 5px;
+	text-align: center;
+	padding: 10px 10px;
+}
+

@@ -28,6 +28,21 @@
 		</div>
 </div>
 
+<div class="liquidation-box">
+	<div class="liquidation-title">今月の立替清算</div>
+	
+	<% if (stash('my_burden') < 0) { %>
+	<!-- 受け取りの場合の表示 -->
+	<div class="alert alert-success liquidation-receive"><%= stash('liquidation_person') %>受取金があります : &yen <%= stash('my_burden') * -1 %></div>
+	<% } elsif (stash('my_burden') > 0) { %>
+	<!-- 支払いの場合の表示 -->
+	<div class="alert alert-danger liquidation-payment"><%= stash('liquidation_person') %>支払金があります : &yen <%= stash('my_burden')%></div>
+	<% } else {	%>
+	<!-- 立替金がない場合の表示 -->
+	<div class="alert alert-primary liquidation-receive"><%= stash('liquidation_person') %>今月の清算はありません</div>
+	<% } %>
+</div>
+
 <% my $expenses_hashref = stash('expenses_hashref'); %>
 	<ul class="category-expenses">
 		<li class="expense-item-box">
