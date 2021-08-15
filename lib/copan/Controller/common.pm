@@ -1,7 +1,6 @@
 package copan::Controller::common;
 
-use warnings;
-use strict;
+use Mojo::Base -base;
 use Crypt::Eksblowfish::Bcrypt;
 use Digest::SHA;
 use Data::UUID;

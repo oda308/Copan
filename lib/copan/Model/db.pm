@@ -1,10 +1,7 @@
 package copan::Model::db;
 
-use strict;
-use warnings;
 use DBI;
-use experimental qw(signatures);
-use Mojo::Util qw(secure_compare);
+use Mojo::Base -base;
 use copan::Controller::date;
 use copan::Controller::common;
 
@@ -88,7 +85,7 @@ sub fetchCurrentMonthReceiptList {
 	}
 	
 	my $start_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . '01' . ' 00:00:00';
-	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_month, $target_month)) . ' 23:59:59';
+	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_year, $target_month)) . ' 23:59:59';
 	
 	my $sql = qq{SELECT * FROM receipt_list };
 	$sql .= qq{WHERE time_stamp >= \'$start_date\' };
@@ -127,7 +124,7 @@ sub fetchEnabledDeleteReceiptList {
 	}
 	
 	my $start_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . '01' . ' 00:00:00';
-	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_month, $target_month)) . ' 23:59:59';
+	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_year, $target_month)) . ' 23:59:59';
 	
 	my $sql = qq{SELECT * FROM receipt_list };
 	$sql .= qq{WHERE time_stamp >= \'$start_date\' };
@@ -195,13 +192,13 @@ sub fetchAllExpenses {
 	
 	my %expenses_hash = ();
 	
-	$expenses_hash{'total_expenses'} = fetchTotalExpenses($dbh, $self, $target_year, $target_month, $group_id);
-	$expenses_hash{'food'} = fetchFood($dbh, $self, $target_year, $target_month, $group_id);
-	$expenses_hash{'daily_necessities'} = fetchDailyNecessities($dbh, $self, $target_year, $target_month, $group_id);
-	$expenses_hash{'electricity'} = fetchElectricity($dbh, $self, $target_year, $target_month, $group_id);
-	$expenses_hash{'gas'} = fetchGas($dbh, $self, $target_year, $target_month, $group_id);
+	$expenses_hash{'total_expenses'} = &fetchTotalExpenses($dbh, $self, $target_year, $target_month, $group_id);
+	$expenses_hash{'food'} = &fetchFood($dbh, $self, $target_year, $target_month, $group_id);
+	$expenses_hash{'daily_necessities'} = &fetchDailyNecessities($dbh, $self, $target_year, $target_month, $group_id);
+	$expenses_hash{'electricity'} = &fetchElectricity($dbh, $self, $target_year, $target_month, $group_id);
+	$expenses_hash{'gas'} = &fetchGas($dbh, $self, $target_year, $target_month, $group_id);
 	$expenses_hash{'water_supply'} = fetchWaterSupply($dbh, $self, $target_year, $target_month, $group_id);
-	$expenses_hash{'others'} = fetchOthers($dbh, $self, $target_year, $target_month, $group_id);
+	$expenses_hash{'others'} = &fetchOthers($dbh, $self, $target_year, $target_month, $group_id);
 	
 	&copan::Controller::common::debug($self, "total_expenses : " . $expenses_hash{'total_expenses'});
 	&copan::Controller::common::debug($self, "food : " . $expenses_hash{'food'});
@@ -222,7 +219,7 @@ sub fetchTotalExpenses {
 	my ($dbh, $self, $target_year, $target_month, $group_id) = @_;
 	
 	my $start_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . '01' . ' 00:00:00';
-	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_month, $target_month)) . ' 23:59:59';
+	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_year, $target_month)) . ' 23:59:59';
 	
 	my $sql = qq{SELECT price FROM receipt_list };
 	$sql .= qq{WHERE time_stamp >= \'$start_date\' };
@@ -255,7 +252,7 @@ sub fetchFood {
 	
 	my $start_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . '01' . ' 00:00:00';
 	
-	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_month, $target_month)) . ' 23:59:59';
+	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_year, $target_month)) . ' 23:59:59';
 	my $sql = qq{SELECT price FROM receipt_list };
 	$sql .= qq{WHERE time_stamp >= \'$start_date\' };
 	$sql .= qq{AND time_stamp <= \'$end_date\' };
@@ -286,7 +283,7 @@ sub fetchDailyNecessities {
 	my ($dbh, $self, $target_year, $target_month, $group_id) = @_;
 	
 	my $start_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . '01' . ' 00:00:00';
-	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_month, $target_month)) . ' 23:59:59';
+	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_year, $target_month)) . ' 23:59:59';
 	
 	my $sql = qq{SELECT price FROM receipt_list };
 	$sql .= qq{WHERE time_stamp >= \'$start_date\' };
@@ -316,7 +313,7 @@ sub fetchElectricity {
 	my ($dbh, $self, $target_year, $target_month, $group_id) = @_;
 	
 	my $start_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . '01' . ' 00:00:00';
-	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_month, $target_month)) . ' 23:59:59';
+	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_year, $target_month)) . ' 23:59:59';
 	
 	my $sql = qq{SELECT price FROM receipt_list };
 	$sql .= qq{WHERE time_stamp >= \'$start_date\' };
@@ -346,7 +343,7 @@ sub fetchGas {
 	my ($dbh, $self, $target_year, $target_month, $group_id) = @_;
 	
 	my $start_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . '01' . ' 00:00:00';
-	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_month, $target_month)) . ' 23:59:59';
+	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_year, $target_month)) . ' 23:59:59';
 	
 	my $sql = qq{SELECT price FROM receipt_list };
 	$sql .= qq{WHERE time_stamp >= \'$start_date\' };
@@ -376,7 +373,7 @@ sub fetchWaterSupply {
 	my ($dbh, $self, $target_year, $target_month, $group_id) = @_;
 	
 	my $start_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . '01' . ' 00:00:00';
-	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_month, $target_month)) . ' 23:59:59';
+	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_year, $target_month)) . ' 23:59:59';
 	
 	my $sql = qq{SELECT price FROM receipt_list };
 	$sql .= qq{WHERE time_stamp >= \'$start_date\' };
@@ -406,7 +403,7 @@ sub fetchOthers {
 	my ($dbh, $self, $target_year, $target_month, $group_id) = @_;
 	
 	my $start_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . '01' . ' 00:00:00';
-	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_month, $target_month)) . ' 23:59:59';
+	my $end_date = $target_year . '-' . sprintf("%02d", $target_month) . '-' . sprintf("%02d", &copan::Controller::date::getDaysOfMonth($target_year, $target_month)) . ' 23:59:59';
 
 	my $sql = qq{SELECT price FROM receipt_list };
 	$sql .= qq{WHERE time_stamp >= \'$start_date\' };

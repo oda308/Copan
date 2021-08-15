@@ -140,10 +140,6 @@ sub expensesList($self) {
 	
 	&copan::Controller::common::debug($self, "Current month receipt");
 	
-	my $pay_everyone_total = 0;
-	
-	# グループ全員分のオブジェクトを作成
-	my @all_member_payment_array = ();
 	# ユーザーid->ユーザー名のハッシュを取得
 	my $group_member_hashref = &copan::Model::db::fetchGroupUserIdAndName($dbh, $self, $my_user_id, $group_id);
 	# グループに存在するユーザー数を取得

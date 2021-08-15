@@ -1,7 +1,6 @@
 package copan::Controller::date;
 
-use warnings;
-use strict;
+use Mojo::Base -base;
 
 ## -------------------------------------------------------------------
 ## 一月後のyyyyとmmを取得
