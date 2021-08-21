@@ -8,9 +8,9 @@
 	<%= stylesheet '/css/main.css?v=2' %>
 	<%= stylesheet '/css/shared_user_list.css?v=1' %>
 	<% if (url_for('current') eq '/') { # ログインページを表示する場合、login.cssをインポート %>
-	<%= stylesheet '/css/login.css?v=1' %>
+	<%= stylesheet '/css/login.css?v=2' %>
 	<% } else { # それ以外を表示する場合、再度メニュー表示用ファイルをインポート  %>
-	<%= stylesheet '/css/side_menu.css?v=1' %>
+	<%= stylesheet '/css/side_menu.css?v=2' %>
 	<% }%>
 	<script src="https://kit.fontawesome.com/a3467d4ec0.js" crossorigin="anonymous"></script>
 	<title>Copan</title>
@@ -58,12 +58,12 @@
 <%= javascript  '/js/jquery-3.6.0.min.js' %>
 <%= javascript  '/js/bootstrap.bundle.min.js' %>
 <% if (url_for('current') ne '/') { # ログインページを以外を表示する場合、sidemenuを表示するファイルをインポート %>
-	<%= javascript '/js/side_menu.js?v=1' %>
+	<%= javascript '/js/side_menu.js?v=2' %>
 <% }%>
 <% if (url_for('current') eq '/') { # ログインページのカルーセル用jsファイル %>
-	<%= javascript '/js/login.js?v=1' %>
+	<%= javascript '/js/login.js?v=2' %>
 <% }%>
 <% if (url_for('current') eq '/expensesList') { # 領収書一覧を表示する場合のjsファイル %>
-	<%= javascript '/js/expenses_list.js?v=1' %>
+	<%= javascript '/js/expenses_list.js?v=2' %>
 <% }%>
 </html>
