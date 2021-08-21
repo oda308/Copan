@@ -32,7 +32,7 @@
 	<%= content %>
 	</main>
 	
-	<% if (url_for('current') ne '/') { # メニューバー(下)を表示する %>
+	<% if (url_for('current') ne '/') { # メニューバー(下)を表示する、ログインページは何も表示しない %>
 	
 	<nav class="navbar fixed-bottom copan-navbar-under copan-theme-color">
 		<div class="copan-navbar-item">
@@ -53,19 +53,15 @@
 		</div>
 		% }
 	</nav>
-	
-	<% } else {  # ログインページではメニューバー(下)を表示せず、代わりにフッターを追加する %>
-	<footer class="footer mt-auto copan-theme-color">
-		<div class="container text-light text-center">
-			&copy;2021Copan
-		</div>
-	</footer>
-	<% } %>
+	% }
 </body>
 <%= javascript  '/js/jquery-3.6.0.min.js' %>
 <%= javascript  '/js/bootstrap.bundle.min.js' %>
 <% if (url_for('current') ne '/') { # ログインページを以外を表示する場合、sidemenuを表示するファイルをインポート %>
 	<%= javascript '/js/side_menu.js?v=1' %>
+<% }%>
+<% if (url_for('current') eq '/') { # ログインページのカルーセル用jsファイル %>
+	<%= javascript '/js/login.js?v=1' %>
 <% }%>
 <% if (url_for('current') eq '/expensesList') { # 領収書一覧を表示する場合のjsファイル %>
 	<%= javascript '/js/expenses_list.js?v=1' %>
