@@ -62,18 +62,18 @@ img.avatar {
 .login-page-wrapper {
 	position: relative;
 	width: 100%;
-	height: 120vh;
+	height: 100vh;
 }
 
-.login-background {
+#login-background {
 	width: 100%;
-	height: 120vh;
+	height: 100%;
 	position: absolute;
 	z-index: -2;
 }
 
-.carousel-overlay {
-	background-color: rgba(0,0,0,0.4);
+.login-overlay {
+	background-color: rgba(0,0,0,0.2);
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -81,13 +81,11 @@ img.avatar {
 	z-index: -1;
 }
 
-.carousel-item  {
-	width: auto;
-	height: 120vh;
-}
-
-.carousel-item img {
+#login-background img {
 	object-fit: cover;
+	width: 100%;
+	height: 100%;
+	position: absolute;
 }
 
 .main {
