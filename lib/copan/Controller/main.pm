@@ -1,6 +1,10 @@
 package copan::Controller::Main;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
 
+
+## ---------------------------------------------------------------------------------------
+## ログインページに遷移させる
+## ---------------------------------------------------------------------------------------
 sub login($self) {
 	
 	my $DB_CONF  = $self->app->config->{DB};
@@ -23,6 +27,9 @@ sub login($self) {
 	$dbh->disconnect; #DB切断
 }
 
+## ---------------------------------------------------------------------------------------
+## ログアウト処理を行った後、ログインページに遷移させる
+## ---------------------------------------------------------------------------------------
 sub logout($self) {
 	
 	my $DB_CONF  = $self->app->config->{DB};
@@ -47,6 +54,9 @@ sub logout($self) {
 	$dbh->disconnect; #DB切断
 }
 
+## ---------------------------------------------------------------------------------------
+## ログインページで入力した情報をチェック、成功なら進み、失敗すればログインページに戻す
+## ---------------------------------------------------------------------------------------
 sub loginCheck($self) {
 	
 	my $DB_CONF  = $self->app->config->{DB};
@@ -57,7 +67,7 @@ sub loginCheck($self) {
 	
 	my $dbh = &copan::Model::db::connectDB($DB_CONF->{DSN}, $DB_CONF->{USER}, $DB_CONF->{PASS}); # DB接続
 	
-	my $is_success = 0;
+	my $is_succeeded_login = 0;
 	my $error_user_name = "";
 	my $error_password = "";
 	my $my_user_id = "";
@@ -72,27 +82,19 @@ sub loginCheck($self) {
 		
 		#　ハッシュ化されたパスワードの取得が出来た時照合する
 		if ($password_hash) {
-			$is_success = &copan::Controller::common::checkPassword($self->param('password'), $password_hash);
+			$is_succeeded_login = &copan::Controller::common::checkPassword($self->param('password'), $password_hash);
 		}
-	
-		if (!$is_success) {
-			$self->stash(error_message => 'ユーザー名 / パスワードに誤りがあります');
-		}
-	
-	# ユーザー名、またはパスワードが入力されていない
-	} else {
-		$self->stash(error_message => 'ユーザー名 / パスワードに誤りがあります');
 	}
 	
-	if ($is_success) { # ログインに成功
+	if ($is_succeeded_login) { # ログインに成功
 		&copan::Controller::common::debug($self, "Login success");
 		
 		my $id = &copan::Controller::common::createSessionId();
 		&copan::Controller::common::debug($self, $id);
 		
-		my $is_success = &copan::Model::db::saveSessionId($dbh, $self, $id, $my_user_id);
+		my $is_succeeded_session_creation = &copan::Model::db::saveSessionId($dbh, $self, $id, $my_user_id);
 		
-		if ($is_success) {
+		if ($is_succeeded_session_creation) {
 			$self->session(id => $id);
 			$self->session(user_id => $my_user_id);
 			$self->redirect_to('/expensesList');
@@ -103,12 +105,17 @@ sub loginCheck($self) {
 		}
 	} else { # ログインに失敗
 		&copan::Controller::common::debug($self, "Login failed");
+		$self->stash(error_message => 'ユーザー名 / パスワードに誤りがあります');
 		$self->render('/login');
 	}
 	
 	$dbh->disconnect; #DB切断
 }
 
+
+## ---------------------------------------------------------------------------------------
+## 支出一覧ページに遷移する
+## ---------------------------------------------------------------------------------------
 sub expensesList($self) {
 	
 	my $my_user_id = 0;
@@ -215,6 +222,9 @@ sub expensesList($self) {
 	$dbh->disconnect; #DB切断
 }
 
+## ---------------------------------------------------------------------------------------
+## 費目追加ページに遷移する
+## ---------------------------------------------------------------------------------------
 sub add($self) {
 	
 	my $DB_CONF  = $self->app->config->{DB};
@@ -253,7 +263,9 @@ sub add($self) {
 	$dbh->disconnect; #DB切断
 }
 
-
+## ---------------------------------------------------------------------------------------
+## 費目追加ページで追加した費目をデータベースに登録する
+## ---------------------------------------------------------------------------------------
 sub update($self) {
 	
 	my $DB_CONF  = $self->app->config->{DB};
@@ -316,6 +328,9 @@ sub update($self) {
 	$dbh->disconnect; #DB切断
 }
 
+## ---------------------------------------------------------------------------------------
+## データベースから費目の削除を行う
+## ---------------------------------------------------------------------------------------
 sub delete($self) {
 	
 	my $DB_CONF  = $self->app->config->{DB};
@@ -370,6 +385,9 @@ sub delete($self) {
 	$dbh->disconnect; #DB切断
 }
 
+## ---------------------------------------------------------------------------------------
+## 家計簿の共有を行っているユーザーを一覧表示する
+## ---------------------------------------------------------------------------------------
 sub sharedUserList($self) {
 	
 	my $my_user_id = 0;
@@ -403,6 +421,9 @@ sub sharedUserList($self) {
 	$dbh->disconnect; #DB切断
 }
 
+## ---------------------------------------------------------------------------------------
+## 費目追加ページで入力エラーがあった場合のエラーメッセージを取得する
+## ---------------------------------------------------------------------------------------
 sub getErrorMessage {
 	
 	my ($input_data_hashref) = @_;
@@ -424,6 +445,9 @@ sub getErrorMessage {
 	return @error_message;
 }
 
+## ---------------------------------------------------------------------------------------
+## 各ページで共通して必要なスタッシュを設定する
+## ---------------------------------------------------------------------------------------
 sub setStash {
 	
 	my ($self, $dbh, $group_id) = @_;
@@ -460,6 +484,9 @@ sub setStash {
 	);
 }
 
+## ---------------------------------------------------------------------------------------
+## 支出一覧ページで表示する年月を取得。指定の年月がなかった場合は現在の日付から取得する
+## ---------------------------------------------------------------------------------------
 sub getTargetYearAndMonth {
 	
 	my ($target_year, $target_month) = @_;
