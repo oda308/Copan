@@ -26,6 +26,8 @@ sub startup {
 	
 	$r->post('/')->to('Main#loginCheck');
 	
+	$r->get('/callbackMobile')->to('Main#callbackMobile');
+	
 	$r->get('/logout')->to('Main#logout');
 	
 	$r->get('/expensesList')->to('Main#expensesList');

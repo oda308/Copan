@@ -1,6 +1,5 @@
 package copan::Controller::Main;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-use Mojo::Headers;
 
 ## ---------------------------------------------------------------------------------------
 ## ログインページに遷移させる
@@ -18,20 +17,6 @@ sub login($self) {
 	&copan::Controller::common::debug($self, "login()");
 	&copan::Controller::common::debug($self, "error_message" . $self->param('error_message'));
 	&copan::Controller::common::debug($self, "error_message" . $self->param('sessionExpired'));
-	&copan::Controller::common::debug($self, "fcm_token : " . $self->param("fcm_token"));
-	
-	my $user_agent = $self->req->headers->user_agent;
-	
-	&copan::Controller::common::debug($self, "user_agent : " . $self->req->headers->user_agent);
-	
-	if (($user_agent =~ /WebView Copan-Android/) || ($user_agent =~ /WebView Copan-iOS/)) {
-		&copan::Controller::common::debug($self, "Access from mobile");
-		$self->stash(fcm_token => $self->param("fcm_token"));
-	}
-	else
-	{
-		&copan::Controller::common::debug($self, "Access from browser");
-	}
 
 	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
 	$self->render('login');
@@ -101,20 +86,28 @@ sub loginCheck($self) {
 	if ($is_succeeded_login) { # ログインに成功
 		&copan::Controller::common::debug($self, "Login success");
 		
+		&copan::Controller::common::debug($self, "fcm_token : " . $self->param("fcm_token"));
+		
 		my $id = &copan::Controller::common::createSessionId();
 		&copan::Controller::common::debug($self, $id);
 		
 		my $is_succeeded_session_creation = &copan::Model::db::saveSessionId($dbh, $self, $id, $my_user_id);
 		
 		if ($is_succeeded_session_creation) {
-			$self->session(id => $id);
-			$self->session(user_id => $my_user_id);
-			$self->redirect_to('/expensesList');
+			
+			if (&copan::Controller::common::isMobileAccess($self)) { # モバイルアプリからのアクセスの場合はコールバックしてアプリ内処理に切り替える
+				$self->redirect_to("/callbackMobile?id=$id");
+			} else {
+				$self->session(id => $id);
+				$self->session(user_id => $my_user_id);
+				$self->redirect_to('/expensesList');
+			}
 		} else { # session_idの保存に失敗
 			&copan::Controller::common::debug($self, "Failed to saving session id.");
 			$self->stash(error_message => 'ログイン処理に失敗しました');
 			$self->render('/login');
 		}
+	
 	} else { # ログインに失敗
 		&copan::Controller::common::debug($self, "Login failed");
 		$self->stash(error_message => 'ユーザー名 / パスワードに誤りがあります');
@@ -124,6 +117,12 @@ sub loginCheck($self) {
 	$dbh->disconnect; #DB切断
 }
 
+## ---------------------------------------------------------------------------------------
+## ログイン成功後、モバイルアプリにコールバックする
+## ---------------------------------------------------------------------------------------
+sub callbackMobile($self) {
+	$self->render('/callbackMobile');
+}
 
 ## ---------------------------------------------------------------------------------------
 ## 支出一覧ページに遷移する

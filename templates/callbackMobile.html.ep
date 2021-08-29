@@ -1,0 +1,7 @@
+% layout 'common', title => 'Index';
+
+モバイルアプリへ処理を移す
+<%= url_for('current') %>
+<%= stash('user_name') %>
+<%= stash('password') %>
+<%= stash('id') %>

@@ -67,4 +67,7 @@
 <% if (url_for('current') eq '/expensesList') { # 領収書一覧を表示する場合のjsファイル %>
 	<%= javascript '/js/expenses_list.js?v=$file_ver' %>
 <% }%>
+<% if (url_for('current') eq '/callbackMobile') { # モバイルアプリへコールバックする場合のjsファイル %>
+	<%= javascript '/js/callback_mobile.js?v=$file_ver' %>
+<% }%>
 </html>

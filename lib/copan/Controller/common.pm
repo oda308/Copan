@@ -1,6 +1,7 @@
 package copan::Controller::common;
 
 use Mojo::Base -base;
+use Mojo::Headers;
 use Crypt::Eksblowfish::Bcrypt;
 use Digest::SHA;
 use Data::UUID;
@@ -65,6 +66,29 @@ sub createSessionId {
 	my $uuid = $ug->create_str();
 	
 	return createHashedString($uuid);
+}
+
+## -------------------------------------------------------------------
+## ユーザーエージェントを見て、モバイルアプリからのアクセスなら1, それ以外は0を返す
+## -------------------------------------------------------------------
+sub isMobileAccess {
+	
+	my ($self) = @_;
+	my $user_agent = $self->req->headers->user_agent;
+	my $is_mobile_access = 0;
+	
+	&copan::Controller::common::debug($self, "user_agent : " . $user_agent);
+	
+	if (($user_agent =~ /WebView Copan-Android/) || ($user_agent =~ /WebView Copan-iOS/)) {
+		&copan::Controller::common::debug($self, "Access from mobile");
+		$is_mobile_access = 1;
+	}
+	else
+	{
+		&copan::Controller::common::debug($self, "Access from browser");
+	}
+	
+	return $is_mobile_access;
 }
 
 ## -------------------------------------------------------------------
