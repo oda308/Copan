@@ -1,6 +1,6 @@
 package copan::Controller::Main;
 use Mojo::Base 'Mojolicious::Controller', -signatures;
-
+use Mojo::Headers;
 
 ## ---------------------------------------------------------------------------------------
 ## ログインページに遷移させる
@@ -18,8 +18,20 @@ sub login($self) {
 	&copan::Controller::common::debug($self, "login()");
 	&copan::Controller::common::debug($self, "error_message" . $self->param('error_message'));
 	&copan::Controller::common::debug($self, "error_message" . $self->param('sessionExpired'));
-
-	$self->stash("error_message");
+	&copan::Controller::common::debug($self, "fcm_token : " . $self->param("fcm_token"));
+	
+	my $user_agent = $self->req->headers->user_agent;
+	
+	&copan::Controller::common::debug($self, "user_agent : " . $self->req->headers->user_agent);
+	
+	if (($user_agent =~ /WebView Copan-Android/) || ($user_agent =~ /WebView Copan-iOS/)) {
+		&copan::Controller::common::debug($self, "Access from mobile");
+		$self->stash(fcm_token => $self->param("fcm_token"));
+	}
+	else
+	{
+		&copan::Controller::common::debug($self, "Access from browser");
+	}
 
 	# レンダーメソッドで描画(第一引数にテキストで文字列の描画)
 	$self->render('login');
